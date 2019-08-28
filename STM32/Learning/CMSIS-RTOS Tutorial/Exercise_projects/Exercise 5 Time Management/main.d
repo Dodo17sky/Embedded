@@ -1,0 +1,12 @@
+.\main.o: main.c
+.\main.o: C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include\STM32F10x.h
+.\main.o: .\RTE\_Target_1\RTE_Components.h
+.\main.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include\core_cm3.h
+.\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\main.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include\cmsis_version.h
+.\main.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include\cmsis_compiler.h
+.\main.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include\cmsis_armcc.h
+.\main.o: C:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.3.0\Device\Include\system_stm32f10x.h
+.\main.o: C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\RTOS\RTX\INC\cmsis_os.h
+.\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\main.o: C:\Keil_v5\ARM\PACK\Keil\MDK-Middleware\7.7.0\Board\Board_LED.h

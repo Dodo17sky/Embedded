@@ -1,0 +1,8 @@
+
+# Ignore by file path pattern
+/**/Objects/**/*.axf
+/**/Objects/**/*.htm
+/**/Objects/**/*.lnp
+/**/Objects/**/*.sct
+/**/Objects/**/*.dep
+

@@ -1,0 +1,4 @@
+
+# Ignore by extension
+*.o
+*.d

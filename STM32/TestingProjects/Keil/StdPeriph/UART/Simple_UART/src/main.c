@@ -1,14 +1,15 @@
 #include "stm32f10x.h"
 #include "stm32f10x_conf.h"
 
+uint16_t rxbuf[64];
+int rxbuf_pos = 0;
+static uint16_t counter = 0;
+
 int main(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
-    
-    uint16_t rxbuf[64];
-    int rxbuf_pos = 0;
-    int i;
+
     
     /* Enable peripheral clocks for USART1 on GPIOA */
     RCC_APB2PeriphClockCmd(
@@ -41,29 +42,34 @@ int main(void)
     
     /* Enable USART1 */
     USART_Cmd(USART1, ENABLE);   
+    
+    /* Enable RXNE interrupt */
+    USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+    
+    /* Enable USART1 global interrupt */
+    NVIC_EnableIRQ(USART1_IRQn);
 
-    while (1)
-    {
-        /* Wait until there's data in the receive data register */
-        while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET);
-        
-        /* Read a byte */
-        rxbuf[rxbuf_pos++] = USART_ReceiveData(USART1);
-
-        /* Check if the previous byte was a newline */
-        if ((rxbuf[rxbuf_pos-1] == '\n' || rxbuf[rxbuf_pos-1] == '\r') && rxbuf_pos != 0) {
-            
-            /* Send the line back */
-            for (i = 0; i < rxbuf_pos; i++) {
-                USART_SendData(USART1, rxbuf[i]);
-                
-                /* Wait until the byte has been transmitted */
-                while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-            }
-            
-            rxbuf_pos = 0;
-        }
+    while(1) {
+        // everything happens in interrupt
     }
+    
     return 0;
 }
 
+void USART1_IRQHandler(void)
+{
+    /* RXNE handler */
+    if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
+    {
+        /* data received */
+    	char c = (char)USART_ReceiveData(USART1);
+        rxbuf[rxbuf_pos++] = c;
+        counter ++;
+        if (c == '\n'){
+            USART_SendData(USART1, '0' + counter);           
+            /* Wait until the byte has been transmitted */
+            while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+            counter = 0;
+        }
+    }
+}

@@ -153,27 +153,17 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>lastReadIdx</ItemText>
+          <ItemText>rxbuf</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>lastReceiveIdx</ItemText>
+          <ItemText>rxbuf[lastReceiveIdx]</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>buf</ItemText>
-        </Ww>
-        <Ww>
-          <count>3</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>idx</ItemText>
-        </Ww>
-        <Ww>
-          <count>4</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>i</ItemText>
+          <ItemText>lastReceiveIdx</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

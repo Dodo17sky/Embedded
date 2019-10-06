@@ -50,16 +50,15 @@ int main(void)
     NVIC_EnableIRQ(USART1_IRQn);
 
     while(1) {
-        if(uart_isAvailable()) {
-            buf[idx] = uart_getLast();
-            if(buf[idx] == '\n') {
-                for(int i=0; i<idx; i++) {
-                    USART_SendData(USART1, buf[i]);
-                    while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-                }
-                idx=0;
+        if(uart_isNewSeparator()) {
+            char data[256] = {0};
+            char* ch = data;
+            uart_getAll(data);
+            while(*ch != 0) {
+                USART_SendData(USART1, *ch);
+                while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+                ch++;
             }
-            idx++;
         }
     }
     

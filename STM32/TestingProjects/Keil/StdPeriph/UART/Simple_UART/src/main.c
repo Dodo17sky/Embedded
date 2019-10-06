@@ -1,9 +1,9 @@
 #include "stm32f10x.h"
 #include "stm32f10x_conf.h"
+#include "uart_buffer.h"
 
-uint16_t rxbuf[64];
-int rxbuf_pos = 0;
-static uint16_t counter = 0;
+char buf[100];
+uint8_t idx = 0;
 
 int main(void)
 {
@@ -50,7 +50,17 @@ int main(void)
     NVIC_EnableIRQ(USART1_IRQn);
 
     while(1) {
-        // everything happens in interrupt
+        if(uart_isAvailable()) {
+            buf[idx] = uart_getLast();
+            if(buf[idx] == '\n') {
+                for(int i=0; i<idx; i++) {
+                    USART_SendData(USART1, buf[i]);
+                    while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+                }
+                idx=0;
+            }
+            idx++;
+        }
     }
     
     return 0;
@@ -61,15 +71,7 @@ void USART1_IRQHandler(void)
     /* RXNE handler */
     if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
     {
-        /* data received */
-    	char c = (char)USART_ReceiveData(USART1);
-        rxbuf[rxbuf_pos++] = c;
-        counter ++;
-        if (c == '\n'){
-            USART_SendData(USART1, '0' + counter);           
-            /* Wait until the byte has been transmitted */
-            while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
-            counter = 0;
-        }
+        uint16_t data = USART_ReceiveData(USART1);
+        uart_receive(data);
     }
 }

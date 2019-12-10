@@ -17,31 +17,31 @@ void SPIx_Init(void);
 uint8_t SPIx_Transfer(uint8_t data);
 void SPIx_EnableSlave(void);
 void SPIx_DisableSlave(void);
-	
-uint8_t receivedByte;
 
-volatile uint8_t sendData[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A };
 
 int main(void)
 {
+    uint8_t loop = 0;
+    const uint16_t waitSPI = 250;
+    
 	DelayInit();
 	
 	SPIx_Init();
 	
+    SPIx_EnableSlave();
 	while (1)
 	{
-        for(uint8_t i=0; i<sizeof(sendData); i++)
+        loop++;
+        // send data
+        SPIx_Transfer((uint8_t) loop);
+        DelayUs(waitSPI);
+        if(loop == 255)
         {
-            // Enable slave
-            SPIx_EnableSlave();
-            // send data
-            SPIx_Transfer((uint8_t) sendData[i]);
-            DelayUs(500);
-            // Disable slave
-            SPIx_DisableSlave();
+            DelayMs(2000);
         }
-		DelayMs(2000);
 	}
+    // Disable slave
+    SPIx_DisableSlave();
 }
 
 void SPIx_Init()

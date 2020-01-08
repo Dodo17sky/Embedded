@@ -22,26 +22,22 @@ void SPIx_DisableSlave(void);
 int main(void)
 {
     uint8_t loop = 0;
-    const uint16_t waitSPI = 250;
-    
-	DelayInit();
-	
-	SPIx_Init();
-	
-    SPIx_EnableSlave();
-	while (1)
-	{
+    const uint16_t waitSPI = 2;
+
+    DelayInit();
+
+    SPIx_Init();
+
+    while (1)
+    {
         loop++;
         // send data
+        SPIx_EnableSlave();
         SPIx_Transfer((uint8_t) loop);
+        SPIx_DisableSlave();
         DelayUs(waitSPI);
-        if(loop == 255)
-        {
-            DelayMs(2000);
-        }
-	}
+    }
     // Disable slave
-    SPIx_DisableSlave();
 }
 
 void SPIx_Init()
@@ -50,9 +46,10 @@ void SPIx_Init()
 	SPI_InitTypeDef SPI_InitStruct;
 	GPIO_InitTypeDef GPIO_InitStruct;
 	
+    /* With prescaler 64, the SPI bit rate will be 1.126 MHz */
 	// Step 1: Initialize SPI
 	RCC_APB2PeriphClockCmd(SPIx_RCC, ENABLE);
-	SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_128;
+	SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_64;
 	SPI_InitStruct.SPI_CPHA = SPI_CPHA_1Edge;
 	SPI_InitStruct.SPI_CPOL = SPI_CPOL_Low;
 	SPI_InitStruct.SPI_DataSize = SPI_DataSize_8b;

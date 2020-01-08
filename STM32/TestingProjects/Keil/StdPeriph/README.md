@@ -1,0 +1,1 @@
+This folder contains a list of different technologies: UART, GPIO, SPI, etc.

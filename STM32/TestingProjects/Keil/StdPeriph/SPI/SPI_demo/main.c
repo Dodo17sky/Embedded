@@ -22,7 +22,7 @@ void SPIx_DisableSlave(void);
 int main(void)
 {
     uint8_t loop = 0;
-    const uint16_t waitSPI = 2;
+    const uint16_t waitSPI = 1000;
 
     DelayInit();
 
@@ -49,7 +49,7 @@ void SPIx_Init()
     /* With prescaler 64, the SPI bit rate will be 1.126 MHz */
 	// Step 1: Initialize SPI
 	RCC_APB2PeriphClockCmd(SPIx_RCC, ENABLE);
-	SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_64;
+	SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_128;
 	SPI_InitStruct.SPI_CPHA = SPI_CPHA_1Edge;
 	SPI_InitStruct.SPI_CPOL = SPI_CPOL_Low;
 	SPI_InitStruct.SPI_DataSize = SPI_DataSize_8b;

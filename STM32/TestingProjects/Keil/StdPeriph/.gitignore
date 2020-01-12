@@ -10,5 +10,7 @@
 # Ignore by extension
 *.dr
 *.crf
+*.hex
+*.map
 
 *EventRecorder*

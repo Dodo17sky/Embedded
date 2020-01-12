@@ -7,3 +7,6 @@
 /**/Objects/**/*.dep
 /**/Objects/**/*.iex
 
+# Ignore by extension
+*.dr
+*.crf

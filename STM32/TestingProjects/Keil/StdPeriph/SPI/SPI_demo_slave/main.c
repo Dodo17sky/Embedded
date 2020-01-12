@@ -42,52 +42,92 @@ uint8_t SPIm_Transfer(uint8_t data);
 void SPIm_EnableSlave(void);
 void SPIm_DisableSlave(void);
 
-GPIO_InitTypeDef GPIO_InitStruct;
+void LedInit();
+void LedToggle();
+
+#define BUFFER_SIZE     10
+volatile uint8_t BufferM_Tx[BUFFER_SIZE] = { 7, 17, 27, 37, 47, 57, 67, 77, 87, 97};
+volatile uint8_t BufferS_Tx[BUFFER_SIZE] = { 9, 19, 29, 39, 49, 59, 69, 79, 89, 99};
+volatile uint8_t BufferM_Rx[BUFFER_SIZE] = {0};
+volatile uint8_t BufferS_Rx[BUFFER_SIZE] = {0};
 
 int main(void)
 {
-    uint8_t loop = 0;
     const uint16_t waitSPI = 1000;
-    uint64_t ts = 0;
-    uint64_t last = 0;
-    uint8_t ledState = 0;
-
+    
+    LedInit();
     DelayInit();
     SPIx_Init();
-    
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_13;
-    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_OD;
-    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOC, &GPIO_InitStruct);
 
     while (1)
     {
-        loop += 5;
-        // send data
+        uint8_t BufIdx = 0;
+        
+        /* Transfer procedure */
         SPIm_EnableSlave();
-        SPIm_Transfer((uint8_t) loop);
+        while (BufIdx < BUFFER_SIZE)
+        {
+            /* Wait for SPIm Tx buffer empty */
+            while (SPI_I2S_GetFlagStatus(SPIm, SPI_I2S_FLAG_TXE) == RESET);
+            /* Send SPIz data */
+            SPI_I2S_SendData(SPIm, BufferM_Tx[BufIdx]);
+            /* Send SPIy data */
+            SPI_I2S_SendData(SPIs, BufferS_Tx[BufIdx]);
+            /* Wait for SPIz data reception */
+            while (SPI_I2S_GetFlagStatus(SPIm, SPI_I2S_FLAG_RXNE) == RESET);
+            /* Read SPIz received data */
+            BufferM_Rx[BufIdx] = SPI_I2S_ReceiveData(SPIm);
+            /* Wait for SPIy data reception */
+            while (SPI_I2S_GetFlagStatus(SPIs, SPI_I2S_FLAG_RXNE) == RESET);
+            /* Read SPIy received data */
+            BufferS_Rx[BufIdx++] = SPI_I2S_ReceiveData(SPIs);
+        }
         SPIm_DisableSlave();
+        
         DelayUs(waitSPI);
         
-        ts = GetTimestamp();
-        if( ts >= (last+500000) )
+        for(BufIdx=0; BufIdx<BUFFER_SIZE; BufIdx++)
         {
-            if(0 == ledState)
-            {
-                ledState = 1;
-                GPIO_SetBits(GPIOC, GPIO_Pin_13);
-            }
-            else
-            {
-                ledState = 0;
-                GPIO_ResetBits(GPIOC, GPIO_Pin_13);
-            }
-            last = ts;
+            BufferM_Rx[BufIdx] = 0;
+            BufferS_Rx[BufIdx] = 0;
         }
-            
+        
+        LedToggle();
     }
-    // Disable slave
+}
+
+void LedInit()
+{
+    GPIO_InitTypeDef gpioConfig;
+    
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+    gpioConfig.GPIO_Pin = GPIO_Pin_13;
+    gpioConfig.GPIO_Mode = GPIO_Mode_Out_OD;
+    gpioConfig.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOC, &gpioConfig);
+}
+
+void LedToggle()
+{
+    uint64_t ts = 0;
+    static uint64_t last = 0;
+    static uint8_t ledState = 0;
+    
+    ts = GetTimestamp();
+    if( ts >= (last+500000) )
+    {
+        if(0 == ledState)
+        {
+            ledState = 1;
+            GPIO_SetBits(GPIOC, GPIO_Pin_13);
+        }
+        else
+        {
+            ledState = 0;
+            GPIO_ResetBits(GPIOC, GPIO_Pin_13);
+        }
+        last = ts;
+    }
 }
 
 void SPI_Init_Master()

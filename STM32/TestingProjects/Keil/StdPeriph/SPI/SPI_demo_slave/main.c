@@ -56,8 +56,16 @@ int main(void)
     DelayInit();
     SPIx_Init();
 
-    /* enable RXNEIE interrupt */
+    /* enable slave Rx interrupt */
     SPI_I2S_ITConfig(SPIs, SPI_I2S_IT_RXNE, ENABLE);
+    /* enable master Rx interrupt */
+    SPI_I2S_ITConfig(SPIm, SPI_I2S_IT_RXNE, ENABLE);
+    
+    /* Wait for SPIm Tx buffer empty */
+    while (SPI_I2S_GetFlagStatus(SPIm, SPI_I2S_FLAG_TXE) == RESET);
+    /* Send SPIz data */
+    SPI_I2S_SendData(SPIm, 0xFF);
+    DelayUs(SPI_TX_DELAY);
     
     while (1)
     {
@@ -65,7 +73,6 @@ int main(void)
         if(1 == newData)
         {
             newData = 0;
-            spiData += 3;
             
             /* Wait for SPIm Tx buffer empty */
             while (SPI_I2S_GetFlagStatus(SPIm, SPI_I2S_FLAG_TXE) == RESET);
@@ -85,8 +92,8 @@ void LedInit()
     GPIO_InitTypeDef gpioConfig;
     
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-    gpioConfig.GPIO_Pin = GPIO_Pin_13;
-    gpioConfig.GPIO_Mode = GPIO_Mode_Out_OD;
+    gpioConfig.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
+    gpioConfig.GPIO_Mode = GPIO_Mode_Out_PP;
     gpioConfig.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOC, &gpioConfig);
 }
@@ -155,9 +162,16 @@ void SPI_NVIC_Init()
     /* 1 bit for pre-emption priority, 3 bits for subpriority */
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
 
-    /* Configure and enable SPI_SLAVE interrupt --------------------------------*/
+    /* Configure and enable SPI SLAVE interrupt --------------------------------*/
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_InitStructure.NVIC_IRQChannel = SPI2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_Init(&NVIC_InitStructure);
+    
+    /* Configure and enable SPI MASTER interrupt --------------------------------*/
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_InitStructure.NVIC_IRQChannel = SPI1_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
     NVIC_Init(&NVIC_InitStructure);
@@ -224,9 +238,32 @@ void SPIm_DisableSlave()
 
 void SPI2_IRQHandler(void)
 {
-    spiData = SPI_I2S_ReceiveData(SPIs);
-    newData = 1;
+    if(GPIOC->ODR & GPIO_Pin_14)
+    {
+        GPIO_ResetBits(GPIOC, GPIO_Pin_14);
+    }
+    else
+    {
+        GPIO_SetBits(GPIOC, GPIO_Pin_14);
+    }
+    
+    uint8_t data = SPI_I2S_ReceiveData(SPIs);
     /* Write in the DR register the data to be sent to master*/
-    SPIs->DR = spiData;
+    SPIs->DR = data;
 }
 
+void SPI1_IRQHandler(void)
+{
+    if(GPIOC->ODR & GPIO_Pin_15)
+    {
+        GPIO_ResetBits(GPIOC, GPIO_Pin_15);
+    }
+    else
+    {
+        GPIO_SetBits(GPIOC, GPIO_Pin_15);
+    }
+    
+    uint8_t data = SPI_I2S_ReceiveData(SPIm);
+    spiData = (data + 3);
+    newData = 1;
+}

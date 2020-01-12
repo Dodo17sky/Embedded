@@ -46,8 +46,8 @@ void LedInit();
 void LedToggle();
 
 #define BUFFER_SIZE     10
-volatile uint8_t BufferM_Tx[BUFFER_SIZE] = { 7, 17, 27, 37, 47, 57, 67, 77, 87, 97};
-volatile uint8_t BufferS_Tx[BUFFER_SIZE] = { 9, 19, 29, 39, 49, 59, 69, 79, 89, 99};
+volatile uint8_t BufferM_Tx[BUFFER_SIZE] = {  0, 1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 };
+volatile uint8_t BufferS_Tx[BUFFER_SIZE] = {  0, 10, 20, 30, 40, 50, 60, 70, 80, 90};
 volatile uint8_t BufferM_Rx[BUFFER_SIZE] = {0};
 volatile uint8_t BufferS_Rx[BUFFER_SIZE] = {0};
 

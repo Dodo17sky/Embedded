@@ -10,3 +10,5 @@
 # Ignore by extension
 *.dr
 *.crf
+
+*EventRecorder*

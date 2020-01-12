@@ -19,6 +19,8 @@ Pin configuration:
 #include "stm32f10x_spi.h"
 #include "delay.h"
 
+#define SPI_TX_DELAY        20
+
 #define SPIm_RCC			RCC_APB2Periph_SPI1
 #define SPIm				SPI1
 #define SPIm_GPIO_RCC		RCC_APB2Periph_GPIOA
@@ -45,51 +47,37 @@ void SPIm_DisableSlave(void);
 void LedInit();
 void LedToggle();
 
-#define BUFFER_SIZE     10
-volatile uint8_t BufferM_Tx[BUFFER_SIZE] = {  0, 1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 };
-volatile uint8_t BufferS_Tx[BUFFER_SIZE] = {  0, 10, 20, 30, 40, 50, 60, 70, 80, 90};
-volatile uint8_t BufferM_Rx[BUFFER_SIZE] = {0};
-volatile uint8_t BufferS_Rx[BUFFER_SIZE] = {0};
+volatile uint32_t RxIsrCalls = 0;
+volatile uint8_t lastTxData = 0;
+volatile uint8_t lastRxData = 0;
+volatile uint8_t newData = 1;
+volatile uint8_t spiData = 7; // a random byte
 
 int main(void)
-{
-    const uint16_t waitSPI = 1000;
-    
+{    
     LedInit();
     DelayInit();
     SPIx_Init();
 
+    /* enable RXNEIE interrupt */
+    SPI_I2S_ITConfig(SPIs, SPI_I2S_IT_RXNE, ENABLE);
+    
     while (1)
     {
-        uint8_t BufIdx = 0;
-        
-        /* Transfer procedure */
-        SPIm_EnableSlave();
-        while (BufIdx < BUFFER_SIZE)
+        if(1 == newData)
         {
+            SPIm_EnableSlave();
+            newData = 0;
+            spiData += 7;
+            
             /* Wait for SPIm Tx buffer empty */
             while (SPI_I2S_GetFlagStatus(SPIm, SPI_I2S_FLAG_TXE) == RESET);
+            lastTxData = spiData;
             /* Send SPIz data */
-            SPI_I2S_SendData(SPIm, BufferM_Tx[BufIdx]);
-            /* Send SPIy data */
-            SPI_I2S_SendData(SPIs, BufferS_Tx[BufIdx]);
-            /* Wait for SPIz data reception */
-            while (SPI_I2S_GetFlagStatus(SPIm, SPI_I2S_FLAG_RXNE) == RESET);
-            /* Read SPIz received data */
-            BufferM_Rx[BufIdx] = SPI_I2S_ReceiveData(SPIm);
-            /* Wait for SPIy data reception */
-            while (SPI_I2S_GetFlagStatus(SPIs, SPI_I2S_FLAG_RXNE) == RESET);
-            /* Read SPIy received data */
-            BufferS_Rx[BufIdx++] = SPI_I2S_ReceiveData(SPIs);
-        }
-        SPIm_DisableSlave();
-        
-        DelayUs(waitSPI);
-        
-        for(BufIdx=0; BufIdx<BUFFER_SIZE; BufIdx++)
-        {
-            BufferM_Rx[BufIdx] = 0;
-            BufferS_Rx[BufIdx] = 0;
+            SPI_I2S_SendData(SPIm, spiData);
+            
+            DelayUs(SPI_TX_DELAY);
+            SPIm_DisableSlave();
         }
         
         LedToggle();
@@ -164,6 +152,21 @@ void SPI_Init_Master()
     SPIm_DisableSlave();
 }
 
+void SPI_NVIC_Init()
+{
+    NVIC_InitTypeDef NVIC_InitStructure;
+   
+    /* 1 bit for pre-emption priority, 3 bits for subpriority */
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+
+    /* Configure and enable SPI_SLAVE interrupt --------------------------------*/
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_InitStructure.NVIC_IRQChannel = SPI2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_Init(&NVIC_InitStructure);
+}
+
 void SPI_Init_Slave()
 {
     SPI_InitTypeDef spiConfig;
@@ -190,6 +193,8 @@ void SPI_Init_Slave()
     spiConfig.SPI_Mode = SPI_Mode_Slave;
     SPI_Init(SPIs, &spiConfig);
     
+    SPI_NVIC_Init();
+        
     SPI_Cmd(SPIs, ENABLE);
 }
 
@@ -209,22 +214,6 @@ void SPIx_Init()
     SPI_Init_Slave();
 }
 
-uint8_t SPIm_Transfer(uint8_t data)
-{
-    // Wait until transmit complete
-	while (!(SPIm->SR & (SPI_I2S_FLAG_TXE)));
-	// Write data to be transmitted to the SPI data register
-	SPIm->DR = data;
-	// Wait until transmit complete
-	while (!(SPIm->SR & (SPI_I2S_FLAG_TXE)));
-	// Wait until receive complete
-	while (!(SPIm->SR & (SPI_I2S_FLAG_RXNE)));
-	// Wait until SPI is not busy anymore
-	while (SPIm->SR & (SPI_I2S_FLAG_BSY));
-	// Return received data from SPI data register
-	return SPIm->DR;
-}
-
 void SPIm_EnableSlave()
 {
 	// Set slave SS pin low
@@ -235,5 +224,13 @@ void SPIm_DisableSlave()
 {
 	// Set slave SS pin high
 	SPIm_GPIO->BSRR = SPIm_PIN_SS;
+}
+
+void SPI2_IRQHandler(void)
+{
+    lastRxData = SPI_I2S_ReceiveData(SPIs);
+    RxIsrCalls++;
+    spiData = (lastRxData % 15);
+    newData = 1;
 }
 

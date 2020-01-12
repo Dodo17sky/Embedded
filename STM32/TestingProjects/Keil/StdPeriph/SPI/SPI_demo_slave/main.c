@@ -19,7 +19,7 @@ Pin configuration:
 #include "stm32f10x_spi.h"
 #include "delay.h"
 
-#define SPI_TX_DELAY        20
+#define SPI_TX_DELAY        100
 
 #define SPIm_RCC			RCC_APB2Periph_SPI1
 #define SPIm				SPI1
@@ -47,9 +47,6 @@ void SPIm_DisableSlave(void);
 void LedInit();
 void LedToggle();
 
-volatile uint32_t RxIsrCalls = 0;
-volatile uint8_t lastTxData = 0;
-volatile uint8_t lastRxData = 0;
 volatile uint8_t newData = 1;
 volatile uint8_t spiData = 7; // a random byte
 
@@ -64,21 +61,20 @@ int main(void)
     
     while (1)
     {
+        SPIm_EnableSlave();
         if(1 == newData)
         {
-            SPIm_EnableSlave();
             newData = 0;
-            spiData += 7;
+            spiData += 3;
             
             /* Wait for SPIm Tx buffer empty */
             while (SPI_I2S_GetFlagStatus(SPIm, SPI_I2S_FLAG_TXE) == RESET);
-            lastTxData = spiData;
             /* Send SPIz data */
             SPI_I2S_SendData(SPIm, spiData);
             
             DelayUs(SPI_TX_DELAY);
-            SPIm_DisableSlave();
         }
+        SPIm_DisableSlave();
         
         LedToggle();
     }
@@ -228,9 +224,9 @@ void SPIm_DisableSlave()
 
 void SPI2_IRQHandler(void)
 {
-    lastRxData = SPI_I2S_ReceiveData(SPIs);
-    RxIsrCalls++;
-    spiData = (lastRxData % 15);
+    spiData = SPI_I2S_ReceiveData(SPIs);
     newData = 1;
+    /* Write in the DR register the data to be sent to master*/
+    SPIs->DR = spiData;
 }
 

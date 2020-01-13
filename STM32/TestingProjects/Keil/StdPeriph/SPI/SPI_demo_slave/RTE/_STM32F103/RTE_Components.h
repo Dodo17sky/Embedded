@@ -3,7 +3,7 @@
  * Auto generated Run-Time-Environment Component Configuration File
  *      *** Do not modify ! ***
  *
- * Project: 'SPI_demo_slave' 
+ * Project: 'SPI_demo_master_slave' 
  * Target:  'STM32F103' 
  */
 

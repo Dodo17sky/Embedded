@@ -40,12 +40,14 @@ Pin configuration:
 #define SPIs_PIN_SS			GPIO_Pin_12
 
 void SPIx_Init(void);
-uint8_t SPIm_Transfer(uint8_t data);
+uint16_t SPI_Master_Transfer(uint16_t data);
 void SPIm_EnableSlave(void);
 void SPIm_DisableSlave(void);
 
 void LedInit();
 void LedToggle();
+
+void SPI_MainRunnable();
 
 volatile uint8_t newData = 1;
 volatile uint8_t spiData = 7; // a random byte
@@ -55,35 +57,33 @@ int main(void)
     LedInit();
     DelayInit();
     SPIx_Init();
-
-    /* enable slave Rx interrupt */
-    SPI_I2S_ITConfig(SPIs, SPI_I2S_IT_RXNE, ENABLE);
-    /* enable master Rx interrupt */
-    SPI_I2S_ITConfig(SPIm, SPI_I2S_IT_RXNE, ENABLE);
     
-    /* Wait for SPIm Tx buffer empty */
-    while (SPI_I2S_GetFlagStatus(SPIm, SPI_I2S_FLAG_TXE) == RESET);
-    /* Send SPIz data */
-    SPI_I2S_SendData(SPIm, 0xFF);
-    DelayUs(SPI_TX_DELAY);
-    
+    SPIm_EnableSlave();
     while (1)
-    {
-        SPIm_EnableSlave();
-        if(1 == newData)
-        {
-            newData = 0;
-            
-            /* Wait for SPIm Tx buffer empty */
-            while (SPI_I2S_GetFlagStatus(SPIm, SPI_I2S_FLAG_TXE) == RESET);
-            /* Send SPIz data */
-            SPI_I2S_SendData(SPIm, spiData);
-            
-            DelayUs(SPI_TX_DELAY);
-        }
-        SPIm_DisableSlave();
+    {        
+        SPI_MainRunnable();
         
         LedToggle();
+    }
+    SPIm_DisableSlave();
+}
+
+void SPI_MainRunnable()
+{
+    uint64_t ts = 0;
+    static uint64_t last = 0;
+    static uint8_t masterTxData = 0;
+
+    /* delay master transmission */
+    ts = GetTimestamp();
+    
+    if( ts >= (last+500) )
+    {
+        last = ts;
+        masterTxData++;
+        
+        
+        SPI_Master_Transfer(masterTxData);
     }
 }
 
@@ -142,12 +142,13 @@ void SPI_Init_Master()
     GPIO_Init(SPIm_GPIO, &gpioConfig);
     
     /* configure master SPI */
+    spiConfig.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
     spiConfig.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_128;
     spiConfig.SPI_CPOL = SPI_CPOL_Low;
     spiConfig.SPI_CPHA = SPI_CPHA_2Edge;
     spiConfig.SPI_DataSize = SPI_DataSize_8b;
     spiConfig.SPI_FirstBit = SPI_FirstBit_MSB;
-    spiConfig.SPI_NSS = SPI_NSS_Soft;
+    spiConfig.SPI_NSS = SPI_NSS_Soft | SPI_NSSInternalSoft_Set;
     spiConfig.SPI_Mode = SPI_Mode_Master;
     SPI_Init(SPIm, &spiConfig);
     
@@ -157,6 +158,17 @@ void SPI_Init_Master()
 
 void SPI_NVIC_Init()
 {
+    /*  MASTER SPI device doesn't need RXNE or TXE interrupts,
+     *  because MASTER SPI device controls communication and
+     *  data transfer on master is done on-demand,
+     *  so master knows when data is transmitted and received.
+     *
+     *  SLAVE SPI device doesn't control communication and 
+     *  he doesn't know when data will be transferred.
+     *  Thus, SLAVE SPI device needs the RXNE interrupt activated
+     *  to be informed when new data was received.
+    */
+    
     NVIC_InitTypeDef NVIC_InitStructure;
    
     /* 1 bit for pre-emption priority, 3 bits for subpriority */
@@ -169,12 +181,8 @@ void SPI_NVIC_Init()
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
     NVIC_Init(&NVIC_InitStructure);
     
-    /* Configure and enable SPI MASTER interrupt --------------------------------*/
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_InitStructure.NVIC_IRQChannel = SPI1_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-    NVIC_Init(&NVIC_InitStructure);
+    /* enable SLAVE Rx interrupt */
+    SPI_I2S_ITConfig(SPIs, SPI_I2S_IT_RXNE, ENABLE);
 }
 
 void SPI_Init_Slave()
@@ -208,6 +216,35 @@ void SPI_Init_Slave()
     SPI_Cmd(SPIs, ENABLE);
 }
 
+uint16_t SPI_Master_Transfer(uint16_t data)
+{
+    /*  An SPI device always perform 2 operations in parallel
+     *      - A transmission (data from master to slave)
+     *      - A reception (data from slave to master)
+     *  
+     *  There is NO NEED FOR INTERRUPT on master for Rx indication or Tx confirmation !!
+     *  How so ??
+     *      - Because the transmission is done on demand (when is needed)
+     *      - The reception is always done right after transmission (Tx and Rx are simultaneous operations)
+     *      - So any Tx involves also an Rx
+     */
+    uint16_t dataFromSlave = 0;
+        
+    /* Wait for SPIm Tx buffer empty */
+    while (SPI_I2S_GetFlagStatus(SPIm, SPI_I2S_FLAG_TXE) == RESET);
+    /* Write data to TX buffer */
+    SPI_I2S_SendData(SPIm, data);
+    
+    /* Starting from now, data is shifted out (from master) and shifted in (from slave) */
+    
+    /* When the transmission is done, the RXNE flag is set */
+    while (SPI_I2S_GetFlagStatus(SPIm, SPI_I2S_FLAG_RXNE) == RESET);
+    /* Transmision done. Get data received from slave */
+    dataFromSlave = SPI_I2S_ReceiveData(SPIm);
+    
+    return dataFromSlave;
+}
+
 void SPI_Init_RCC()
 {
     RCC_APB2PeriphClockCmd(SPIm_GPIO_RCC, ENABLE);
@@ -222,6 +259,9 @@ void SPIx_Init()
 	SPI_Init_RCC();
     SPI_Init_Master();
     SPI_Init_Slave();
+    
+    /* Clear any pending RX status */
+    SPI_I2S_ClearFlag(SPIm, SPI_I2S_FLAG_RXNE);
 }
 
 void SPIm_EnableSlave()
@@ -250,20 +290,4 @@ void SPI2_IRQHandler(void)
     uint8_t data = SPI_I2S_ReceiveData(SPIs);
     /* Write in the DR register the data to be sent to master*/
     SPIs->DR = data;
-}
-
-void SPI1_IRQHandler(void)
-{
-    if(GPIOC->ODR & GPIO_Pin_15)
-    {
-        GPIO_ResetBits(GPIOC, GPIO_Pin_15);
-    }
-    else
-    {
-        GPIO_SetBits(GPIOC, GPIO_Pin_15);
-    }
-    
-    uint8_t data = SPI_I2S_ReceiveData(SPIm);
-    spiData = (data + 3);
-    newData = 1;
 }

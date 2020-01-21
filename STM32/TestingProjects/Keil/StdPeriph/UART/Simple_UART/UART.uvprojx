@@ -388,11 +388,6 @@
               <FilePath>.\src\main.c</FilePath>
             </File>
             <File>
-              <FileName>util.string.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\util.string.c</FilePath>
-            </File>
-            <File>
               <FileName>uart_buffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\uart_buffer.c</FilePath>
@@ -402,11 +397,6 @@
         <Group>
           <GroupName>include</GroupName>
           <Files>
-            <File>
-              <FileName>util_string.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\include\util_string.h</FilePath>
-            </File>
             <File>
               <FileName>uart_buffer.h</FileName>
               <FileType>5</FileType>

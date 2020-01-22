@@ -8,7 +8,7 @@
 /**/Objects/**/*.iex
 
 # Ignore by extension
-*.dr
+*.uvguix.*
 *.crf
 *.hex
 *.map

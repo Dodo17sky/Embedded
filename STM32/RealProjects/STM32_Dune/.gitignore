@@ -1,0 +1,14 @@
+*.scvd
+
+/**/Objects/**/*.axf
+/**/Objects/**/*.htm
+/**/Objects/**/*.lnp
+/**/Objects/**/*.sct
+/**/Objects/**/*.dep
+/**/Objects/**/*.iex
+/**/Objects/**/*.crf
+/**/Objects/**/*.d
+/**/Objects/**/*.o
+
+/**/Listings/**/*.lst
+/**/Listings/**/*.map

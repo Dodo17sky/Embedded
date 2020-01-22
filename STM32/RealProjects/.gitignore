@@ -1,0 +1,6 @@
+
+# Ignore by file path pattern
+/**/Some_Folder/**/*.some_extension
+
+# Ignore by extension
+*.uvguix.*

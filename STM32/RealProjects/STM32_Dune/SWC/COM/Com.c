@@ -6,6 +6,7 @@
 #include "Spi.h"
 #include "String.h"
 #include "Utils.h"
+#include "Wifi.h"
 
 /*--------------------------------------------------------------------------------
 *                           Global variables
@@ -39,6 +40,8 @@ void Com_MainRunnable(void)
     Com_Uart_MainFunction();
     
     Com_SPI_MainFunction();
+    
+    Wifi_MainFunction();
 }
 
 /*--------------------------------------------------------------------------------
@@ -49,9 +52,7 @@ void Com_MainRunnable(void)
 *--------------------------------------------------------------------------------*/ 
 void Com_InitRunnable(void)
 {
-    Uart_Send_String(UART_TO_PC1, "Hi. this is UART1\n", 18);
-    Uart_Send_String(UART_TO_PC2, "Hi. this is UART2\n", 18);
-    Uart_Send_String(UART_TO_PC3, "Hi. this is UART3\n", 18);
+    
 }
 
 /*--------------------------------------------------------------------------------
@@ -62,6 +63,7 @@ void Com_InitRunnable(void)
 *--------------------------------------------------------------------------------*/
 static void Com_Uart_MainFunction(void)
 {
+#if 0
     U8 readStatus = RETURN_NOK;
     UartRxBuffer_Type tmpBuf = {0};
 
@@ -100,7 +102,7 @@ static void Com_Uart_MainFunction(void)
         Uart_Send_String(UART_TO_PC3, "\n", 1);
     }
 #endif /* ENABLE_DEVICE_UART3 == ON */
-    
+#endif /* 0 */
 }
 
 /*--------------------------------------------------------------------------------

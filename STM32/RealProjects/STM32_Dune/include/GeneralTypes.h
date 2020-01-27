@@ -25,6 +25,9 @@
 #define     OFF             0U
 #define     ON              1U
 
+/* null pointer */
+#define     nullptr         0U
+
 /*--------------------------------------------------------------------------------
 *                           Typedef's
 *--------------------------------------------------------------------------------*/
@@ -43,7 +46,6 @@ typedef    signed long long   S64;
 
 /* Variable size arrays */
 typedef U8 ArraySize11[11];
-
 
 #endif /* GENERALTYPES_HEADER */
 

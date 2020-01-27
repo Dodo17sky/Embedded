@@ -3,34 +3,37 @@
 *--------------------------------------------------------------------------------*/
 #include "Uart.h"
 #include "String.h"
+#include "RingBuffer.h"
+#include "Utils.h"
 
-
-/*--------------------------------------------------------------------------------
-*                           Global variables
-*--------------------------------------------------------------------------------*/
-#if (ENABLE_DEVICE_UART1 == ON)
-    UartRx_Type RxBuf1 = {0};
-#endif /* ENABLE_DEVICE_UART1 == ON */
-
-#if (ENABLE_DEVICE_UART2 == ON)
-    UartRx_Type RxBuf2 = {0};
-#endif /* ENABLE_DEVICE_UART2 == ON */
-    
-#if (ENABLE_DEVICE_UART3 == ON)
-    UartRx_Type RxBuf3 = {0};
-#endif /* ENABLE_DEVICE_UART3 == ON */
-    
-UartPeripheralState_Type PeripheralState = { FALSE, FALSE, FALSE };
 /*--------------------------------------------------------------------------------
 *                           Const and Macro
 *--------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------------
+*                           Global variables
+*--------------------------------------------------------------------------------*/
+
+#if (ENABLE_DEVICE_UART1 == ON)
+    static char U1_RxBuffer[UART_RX_BUFFER_SIZE];
+    static RingBuffer_Type RB_U1;
+#endif /* ENABLE_DEVICE_UART1 == ON */
+
+#if (ENABLE_DEVICE_UART2 == ON)
+    static char U2_RxBuffer[UART_RX_BUFFER_SIZE];
+    static RingBuffer_Type RB_U2;
+#endif /* ENABLE_DEVICE_UART2 == ON */
+    
+#if (ENABLE_DEVICE_UART3 == ON)
+    static char U3_RxBuffer[UART_RX_BUFFER_SIZE];
+    static RingBuffer_Type RB_U3;
+#endif /* ENABLE_DEVICE_UART3 == ON */
+
+/*--------------------------------------------------------------------------------
 *                           Functions prototypes
 *--------------------------------------------------------------------------------*/
-void Init_UART1(void);
+static U8 Init_LowDriver(void);
 static inline U8 Uart_SendOneByte(USART_TypeDef* UARTx, U8 byte);
-static void Uart_AppendRxData(USART_TypeDef const* UARTx, U8 newByte);
 
 /*--------------------------------------------------------------------------------
 @name       Uart_Init
@@ -39,6 +42,53 @@ static void Uart_AppendRxData(USART_TypeDef const* UARTx, U8 newByte);
 @paramOut   
 *--------------------------------------------------------------------------------*/
 U8 Uart_Init(void)
+{
+    U8 initStatus = RETURN_OK;
+
+#if UART_IS_ENABLED
+#if (ENABLE_DEVICE_UART1 == ON)
+    RB_Init(&RB_U1, U1_RxBuffer, ARRAY_SIZE(U1_RxBuffer));
+#endif /* ENABLE_DEVICE_UART1 == ON */
+
+#if (ENABLE_DEVICE_UART2 == ON)
+    RB_Init(&RB_U2, U2_RxBuffer, ARRAY_SIZE(U2_RxBuffer));
+#endif /* ENABLE_DEVICE_UART2 == ON */
+    
+#if (ENABLE_DEVICE_UART3 == ON)
+    RB_Init(&RB_U3, U3_RxBuffer, ARRAY_SIZE(U3_RxBuffer));
+#endif /* ENABLE_DEVICE_UART3 == ON */
+    
+    initStatus = Init_LowDriver();
+    
+    /* Mark UART channels initialization */
+    Uart_Send_String(USART1, "Hi! This is UART1\n", 18);
+    Uart_Send_String(USART2, "Hi! This is UART2\n", 18);
+    Uart_Send_String(USART3, "Hi! This is UART3\n", 18);
+#endif /* UART_IS_ENABLED */
+
+    return initStatus;
+}
+
+/*--------------------------------------------------------------------------------
+@name       Uart_Deinit
+@brief      
+@paramIn    
+@paramOut   
+*--------------------------------------------------------------------------------*/
+U8 Uart_Deinit(void)
+{
+    U8 retCode = RETURN_OK;
+    
+    return retCode;
+}
+
+/*--------------------------------------------------------------------------------
+@name       Uart_Init
+@brief      
+@paramIn    
+@paramOut   
+*--------------------------------------------------------------------------------*/
+static U8 Init_LowDriver(void)
 {
     U8 retCode = RETURN_OK;
     
@@ -49,17 +99,14 @@ U8 Uart_Init(void)
      */
 #if (ENABLE_DEVICE_UART1 == ON)
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
-    PeripheralState.isEnabled_UART1 = TRUE;
 #endif /* ENABLE_DEVICE_UART1 == ON */
 
 #if (ENABLE_DEVICE_UART2 == ON)
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
-    PeripheralState.isEnabled_UART2 = TRUE;
 #endif /* ENABLE_DEVICE_UART2 == ON */
     
 #if (ENABLE_DEVICE_UART3 == ON)
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
-    PeripheralState.isEnabled_UART3 = TRUE;
 #endif /* ENABLE_DEVICE_UART3 == ON */
     
     /*
@@ -101,24 +148,7 @@ U8 Uart_Init(void)
     /* Enable USART global interrupt */
     NVIC_EnableIRQ(USART3_IRQn);
 #endif /* ENABLE_DEVICE_UART3 == ON */
-    
-    return retCode;
-}
-
-/*--------------------------------------------------------------------------------
-@name       Uart_Deinit
-@brief      
-@paramIn    
-@paramOut   
-*--------------------------------------------------------------------------------*/
-U8 Uart_Deinit(void)
-{
-    U8 retCode = RETURN_OK;
-    
-    PeripheralState.isEnabled_UART1 = FALSE;
-    PeripheralState.isEnabled_UART2 = FALSE;
-    PeripheralState.isEnabled_UART3 = FALSE;
-    
+        
     return retCode;
 }
 
@@ -128,6 +158,7 @@ U8 Uart_Deinit(void)
 static inline U8 Uart_SendOneByte(USART_TypeDef* UARTx, U8 byte)
 {
     U8 sendStatus = RETURN_NOK;
+    
 #if (ENABLE_DEVICE_UART1 == ON)
     if(USART1 == UARTx)
     {
@@ -168,8 +199,10 @@ U8 Uart_Send_Byte(USART_TypeDef* UARTx, U8 data)
 {
     U8 sendStatus = RETURN_NOK;
     
+#if UART_IS_ENABLED    
     sendStatus = Uart_SendOneByte(UARTx, data);
-    
+#endif /* UART_IS_ENABLED */
+
     return sendStatus;
 }
 
@@ -183,12 +216,14 @@ U8 Uart_Send_ByteArray(USART_TypeDef* UARTx, U8* data, U8 size)
 {
     U8 sendStatus = RETURN_OK;
     U8 index = 0;
-    
+
+#if UART_IS_ENABLED
     for(index=0; (index<size) && (RETURN_OK==sendStatus); index++)
     {
         sendStatus = Uart_SendOneByte(UARTx, data[index]);
     }
-    
+#endif /* UART_IS_ENABLED */
+
     return sendStatus;
 }
 
@@ -202,11 +237,13 @@ U8 Uart_Send_String(USART_TypeDef* UARTx, char* data, U8 size)
 {
     U8 sendStatus = RETURN_OK;
     U8 index = 0;
-    
+
+#if UART_IS_ENABLED
     for(index=0; (index<size) && (RETURN_OK==sendStatus); index++)
     {
         sendStatus = Uart_SendOneByte(UARTx, data[index]);
     }
+#endif /* UART_IS_ENABLED */
     
     return sendStatus;
 }
@@ -222,12 +259,14 @@ U8 Uart_Send_SInteger(USART_TypeDef* UARTx, S32 number)
 {
     U8 sendStatus = RETURN_NOK;
     
+#if UART_IS_ENABLED
     if(number < 0L)
     {
         sendStatus = Uart_Send_Byte(UARTx, '-');
         number *= (-1);
     }
     sendStatus = Uart_Send_UInteger(UARTx, (U32)number);
+#endif /* UART_IS_ENABLED */
     
     return sendStatus;
 }
@@ -245,12 +284,53 @@ U8 Uart_Send_UInteger(USART_TypeDef* UARTx, U32 number)
     U8 strLen = 0;
     ArraySize11 strBuf;
     
+#if UART_IS_ENABLED
     strLen = IntToString(number, &strBuf);
     sendStatus = Uart_Send_String(UARTx, (char*)strBuf, strLen);
+#endif /* UART_IS_ENABLED */
     
     return sendStatus;
 }
 
+/*--------------------------------------------------------------------------------
+@name       Uart_RB_Read
+@brief      TBD
+@paramIn    
+@paramOut   
+*--------------------------------------------------------------------------------*/
+U16 Uart_RB_Read(USART_TypeDef* UARTx, char* buffer, U16 bufSize)
+{
+    U16 dataRead = 0;
+    RingBuffer_Type* tmpRB = nullptr;
+    
+#if UART_IS_ENABLED
+    if(USART1 == UARTx)
+    {
+#if (ENABLE_DEVICE_UART1 == ON)
+        tmpRB = &RB_U1;
+#endif /* ENABLE_DEVICE_UART1 == ON */
+    }
+    else if(USART2 == UARTx)
+    {
+#if (ENABLE_DEVICE_UART2 == ON)
+        tmpRB = &RB_U2;
+#endif /* ENABLE_DEVICE_UART2 == ON */
+    }
+    else if(USART3 == UARTx)
+    {
+#if (ENABLE_DEVICE_UART3 == ON)
+        tmpRB = &RB_U3;
+#endif /* ENABLE_DEVICE_UART3 == ON */
+    }
+
+    if(tmpRB != nullptr)
+    {
+        RB_Read(tmpRB, buffer, bufSize, dataRead);
+    }
+#endif /* UART_IS_ENABLED */
+    
+    return dataRead;
+}
 
 /*--------------------------------------------------------------------------------
 @name       USART1_IRQHandler
@@ -265,10 +345,17 @@ void USART1_IRQHandler(void)
     if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
     {
         uint16_t newByte = USART_ReceiveData(USART1);
-        Uart_AppendRxData(USART1, newByte);
+        RB_Write(&RB_U1, (char)newByte);
     }
 }
 #endif /* ENABLE_DEVICE_UART1 == ON */
+
+/*--------------------------------------------------------------------------------
+@name       USART2_IRQHandler
+@brief      Callback function related to UART2 intterupts
+@paramIn    
+@paramOut   
+*--------------------------------------------------------------------------------*/
 #if (ENABLE_DEVICE_UART2 == ON)
 void USART2_IRQHandler(void)
 {
@@ -276,7 +363,7 @@ void USART2_IRQHandler(void)
     if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
     {
         uint16_t newByte = USART_ReceiveData(USART2);
-        Uart_AppendRxData(USART2, newByte);
+        RB_Write(&RB_U2, (char)newByte);
     }
 }
 #endif /* ENABLE_DEVICE_UART2 == ON */
@@ -294,104 +381,8 @@ void USART3_IRQHandler(void)
     if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)
     {
         uint16_t newByte = USART_ReceiveData(USART3);
-        Uart_AppendRxData(USART3, newByte);
+        RB_Write(&RB_U3, (char)newByte);
     }
 }
 #endif /* ENABLE_DEVICE_UART3 == ON */
 
-/*--------------------------------------------------------------------------------
-@brief      Add a new byte to RX internal buffer
-*--------------------------------------------------------------------------------*/
-static void Uart_AppendRxData(USART_TypeDef const* UARTx, U8 newByte)
-{
-    UartRx_Type* RxBuf = 0;
-    
-#if (ENABLE_DEVICE_UART1 == ON)
-    if(UARTx == USART1)
-    {
-        RxBuf = &RxBuf1;
-    }
-#endif /* ENABLE_DEVICE_UART1 == ON */
-
-#if (ENABLE_DEVICE_UART2 == ON)
-    if(UARTx == USART2)
-    {
-        RxBuf = &RxBuf2;
-    }
-#endif /* ENABLE_DEVICE_UART2 == ON */
-    
-#if (ENABLE_DEVICE_UART3 == ON)
-    if(UARTx == USART3)
-    {
-        RxBuf = &RxBuf3;
-    }
-#endif /* ENABLE_DEVICE_UART3 == ON */
-    
-    if(RxBuf->Status == RXBUF_STATUS_WDONE)
-    {
-        /* Data Lost, because was not read since last update */
-        RxBuf->error.DataLostCounter++;
-    }
-    
-    if(RxBuf->DataLength == (UART_RX_BUFFER_SIZE-1))
-    {
-        /* Buffer is full, so data will be lost */
-        RxBuf->error.RxBufOverflow++;
-        RxBuf->Buffer[RxBuf->DataLength] = 0;
-        RxBuf->Status = RXBUF_STATUS_WDONE;
-    }
-    else if(UART_RX_END_CHAR == newByte)
-    {
-        /* end of transmision */
-        RxBuf->Status = RXBUF_STATUS_WDONE;
-    }
-    else
-    {
-        /* new byte received */
-        RxBuf->Buffer[RxBuf->DataLength++] = newByte;
-    }
-}
-
-/*--------------------------------------------------------------------------------
-@brief      Read all data from RX buffer
-*--------------------------------------------------------------------------------*/
-U8 Uart_Read_All(USART_TypeDef* UARTx, UartRxBuffer_Type* outBuffer)
-{
-    U8 retCode = RETURN_NOK;
-    U8 index = 0;
-    UartRx_Type* RxBuf = 0;
-    
-#if (ENABLE_DEVICE_UART1 == ON)
-    if(UARTx == USART1)
-    {
-        RxBuf = &RxBuf1;
-    }
-#endif /* ENABLE_DEVICE_UART1 == ON */
-
-#if (ENABLE_DEVICE_UART2 == ON)
-    if(UARTx == USART2)
-    {
-        RxBuf = &RxBuf2;
-    }
-#endif /* ENABLE_DEVICE_UART2 == ON */
-    
-#if (ENABLE_DEVICE_UART3 == ON)
-    if(UARTx == USART3)
-    {
-        RxBuf = &RxBuf3;
-    }
-#endif /* ENABLE_DEVICE_UART3 == ON */
-    
-    if(RxBuf->Status == RXBUF_STATUS_WDONE)
-    {
-        for(index=0; index<RxBuf->DataLength; index++)
-        {
-            (*outBuffer)[index] = RxBuf->Buffer[index];
-        }
-        RxBuf->DataLength = 0;
-        RxBuf->Status = RXBUF_STATUS_RDONE;
-        retCode = RETURN_OK;
-    }
-    
-    return retCode;
-}

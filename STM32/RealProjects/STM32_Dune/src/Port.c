@@ -7,7 +7,7 @@
 /*--------------------------------------------------------------------------------
 *                           Global variables
 *--------------------------------------------------------------------------------*/
-static PinConfig_Type PinList[] = 
+static const PinConfig_Type PinList[] = 
 {
     {   PIN_PORT_A,     PIN_NUMBER_0 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
     {   PIN_PORT_A,     PIN_NUMBER_1 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
@@ -19,7 +19,7 @@ static PinConfig_Type PinList[] =
     {   PIN_PORT_A,     PIN_NUMBER_7 ,  PIN_MODE_AF_PP      ,   GPIO_Speed_50MHz    }, /* SPI MASTER MOSI       */
     {   PIN_PORT_A,     PIN_NUMBER_8 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
     {   PIN_PORT_A,     PIN_NUMBER_9 ,  PIN_MODE_AF_PP      ,   GPIO_Speed_50MHz    }, /* UART1 TX              */
-    {   PIN_PORT_A,     PIN_NUMBER_10,  PIN_MODE_IN_FLOATING,   GPIO_Speed_50MHz    }, /* UART2 RX              */
+    {   PIN_PORT_A,     PIN_NUMBER_10,  PIN_MODE_IN_FLOATING,   GPIO_Speed_50MHz    }, /* UART1 RX              */
     {   PIN_PORT_A,     PIN_NUMBER_11,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
     {   PIN_PORT_A,     PIN_NUMBER_12,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
     {   PIN_PORT_A,     PIN_NUMBER_13,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */

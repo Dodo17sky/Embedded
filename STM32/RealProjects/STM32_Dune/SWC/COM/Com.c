@@ -6,7 +6,6 @@
 #include "Spi.h"
 #include "String.h"
 #include "Utils.h"
-#include "Wifi.h"
 
 /*--------------------------------------------------------------------------------
 *                           Global variables
@@ -15,9 +14,6 @@
 /*--------------------------------------------------------------------------------
 *                           Const and Macro
 *--------------------------------------------------------------------------------*/
-#define UART_TO_PC1         USART1
-#define UART_TO_PC2         USART2
-#define UART_TO_PC3         USART3
 
 /*--------------------------------------------------------------------------------
 *                           Functions prototypes declaration
@@ -40,8 +36,6 @@ void Com_MainRunnable(void)
     Com_Uart_MainFunction();
     
     Com_SPI_MainFunction();
-    
-    Wifi_MainFunction();
 }
 
 /*--------------------------------------------------------------------------------
@@ -63,46 +57,44 @@ void Com_InitRunnable(void)
 *--------------------------------------------------------------------------------*/
 static void Com_Uart_MainFunction(void)
 {
-#if 0
-    U8 readStatus = RETURN_NOK;
+    U8 bytesRead = 0;
     UartRxBuffer_Type tmpBuf = {0};
 
 #if (ENABLE_DEVICE_UART1 == ON)
     ZERO_FILL_ARRAY(tmpBuf);
-    readStatus = Uart_Read_All(UART_TO_PC1, &tmpBuf);
-    if(RETURN_OK == readStatus)
+    bytesRead = Uart_RB_Read(USART1, (char*)&tmpBuf, ARRAY_SIZE(tmpBuf));
+    if(bytesRead > 0)
     {
         U8 dataLength = GetStrLength((char*)&tmpBuf);
-        Uart_Send_String(UART_TO_PC1, "[1]:", 4);
-        Uart_Send_String(UART_TO_PC1, (char*)tmpBuf, dataLength);
-        Uart_Send_String(UART_TO_PC1, "\n", 1);
+        Uart_Send_String(USART1, "[1]:", 4);
+        Uart_Send_String(USART1, (char*)tmpBuf, dataLength);
+        Uart_Send_String(USART1, "\n", 1);
     }
 #endif /* ENABLE_DEVICE_UART1 == ON */
 
 #if (ENABLE_DEVICE_UART2 == ON)
     ZERO_FILL_ARRAY(tmpBuf);
-    readStatus = Uart_Read_All(UART_TO_PC2, &tmpBuf);
-    if(RETURN_OK == readStatus)
+    bytesRead = Uart_RB_Read(USART2, (char*)&tmpBuf, ARRAY_SIZE(tmpBuf));
+    if(bytesRead > 0)
     {
         U8 dataLength = GetStrLength((char*)&tmpBuf);
-        Uart_Send_String(UART_TO_PC2, "[2]:", 4);
-        Uart_Send_String(UART_TO_PC2, (char*)tmpBuf, dataLength);
-        Uart_Send_String(UART_TO_PC2, "\n", 1);
+        Uart_Send_String(USART2, "[2]:", 4);
+        Uart_Send_String(USART2, (char*)tmpBuf, dataLength);
+        Uart_Send_String(USART2, "\n", 1);
     }
 #endif /* ENABLE_DEVICE_UART2 == ON */
     
 #if (ENABLE_DEVICE_UART3 == ON)
     ZERO_FILL_ARRAY(tmpBuf);
-    readStatus = Uart_Read_All(UART_TO_PC3, &tmpBuf);
-    if(RETURN_OK == readStatus)
+    bytesRead = Uart_RB_Read(USART3, (char*)&tmpBuf, ARRAY_SIZE(tmpBuf));
+    if(bytesRead > 0)
     {
         U8 dataLength = GetStrLength((char*)&tmpBuf);
-        Uart_Send_String(UART_TO_PC3, "[3]:", 4);
-        Uart_Send_String(UART_TO_PC3, (char*)tmpBuf, dataLength);
-        Uart_Send_String(UART_TO_PC3, "\n", 1);
+        Uart_Send_String(USART3, "[3]:", 4);
+        Uart_Send_String(USART3, (char*)tmpBuf, dataLength);
+        Uart_Send_String(USART3, "\n", 1);
     }
 #endif /* ENABLE_DEVICE_UART3 == ON */
-#endif /* 0 */
 }
 
 /*--------------------------------------------------------------------------------

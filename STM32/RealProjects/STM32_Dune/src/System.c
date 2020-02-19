@@ -7,7 +7,6 @@
 #include "Task.h"
 #include "Uart.h"
 #include "Spi.h"
-#include "Wifi.h"
 
 /*--------------------------------------------------------------------------------
 *                           Global variables
@@ -37,7 +36,6 @@ U8 System_Init(void)
     retCode += Uart_Init();
     retCode += Timer_Init();
     retCode += Spi_Init();
-    retCode += Wifi_Init();
     retCode += Task_Init();
 
     return retCode;

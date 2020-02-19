@@ -15,9 +15,9 @@
 /*--------------------------------------------------------------------------------
 *                           Const and Macro
 *--------------------------------------------------------------------------------*/
-#define ENABLE_DEVICE_UART1         ON
-#define ENABLE_DEVICE_UART2         OFF
-#define ENABLE_DEVICE_UART3         ON
+#define ENABLE_DEVICE_UART1         OFF
+#define ENABLE_DEVICE_UART2         ON
+#define ENABLE_DEVICE_UART3         OFF
 #define UART_IS_ENABLED             (0 < (ENABLE_DEVICE_UART1 + ENABLE_DEVICE_UART2 + ENABLE_DEVICE_UART3))
 
 #define UART_RX_BUFFER_SIZE         200

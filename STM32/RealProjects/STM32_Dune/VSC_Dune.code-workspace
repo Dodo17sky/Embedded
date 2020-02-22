@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"st7735.h": "c",
+			"stm32f10x_rcc.h": "c",
+			"stm32f10x_gpio.h": "c",
+			"display.h": "c",
+			"stm32f10x.h": "c",
+			"stm32f10x_spi.h": "c"
+		}
+	}
+}

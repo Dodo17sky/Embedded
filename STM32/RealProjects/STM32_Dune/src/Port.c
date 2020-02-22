@@ -11,15 +11,15 @@ static const PinConfig_Type PinList[] =
 {
     {   PIN_PORT_A,     PIN_NUMBER_0 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
     {   PIN_PORT_A,     PIN_NUMBER_1 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
-    {   PIN_PORT_A,     PIN_NUMBER_2 ,  PIN_MODE_AF_PP      ,   GPIO_Speed_50MHz    }, /* UART2 TX              */
-    {   PIN_PORT_A,     PIN_NUMBER_3 ,  PIN_MODE_IN_FLOATING,   GPIO_Speed_50MHz    }, /* UART2 RX              */
-    {   PIN_PORT_A,     PIN_NUMBER_4 ,  PIN_MODE_OUT_PP     ,   GPIO_Speed_50MHz    }, /* SPI MASTER SS         */
-    {   PIN_PORT_A,     PIN_NUMBER_5 ,  PIN_MODE_AF_PP      ,   GPIO_Speed_50MHz    }, /* SPI MASTER CLK        */
-    {   PIN_PORT_A,     PIN_NUMBER_6 ,  PIN_MODE_IN_FLOATING,   GPIO_Speed_50MHz    }, /* SPI MASTER MISO       */
-    {   PIN_PORT_A,     PIN_NUMBER_7 ,  PIN_MODE_AF_PP      ,   GPIO_Speed_50MHz    }, /* SPI MASTER MOSI       */
+    {   PIN_PORT_A,     PIN_NUMBER_2 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* UART2 TX              */
+    {   PIN_PORT_A,     PIN_NUMBER_3 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* UART2 RX              */
+    {   PIN_PORT_A,     PIN_NUMBER_4 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* SPI MASTER SS         */
+    {   PIN_PORT_A,     PIN_NUMBER_5 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* SPI MASTER CLK        */
+    {   PIN_PORT_A,     PIN_NUMBER_6 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* SPI MASTER MISO       */
+    {   PIN_PORT_A,     PIN_NUMBER_7 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* SPI MASTER MOSI       */
     {   PIN_PORT_A,     PIN_NUMBER_8 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
-    {   PIN_PORT_A,     PIN_NUMBER_9 ,  PIN_MODE_AF_PP      ,   GPIO_Speed_50MHz    }, /* UART1 TX              */
-    {   PIN_PORT_A,     PIN_NUMBER_10,  PIN_MODE_IN_FLOATING,   GPIO_Speed_50MHz    }, /* UART1 RX              */
+    {   PIN_PORT_A,     PIN_NUMBER_9 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* UART1 TX              */
+    {   PIN_PORT_A,     PIN_NUMBER_10,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* UART1 RX              */
     {   PIN_PORT_A,     PIN_NUMBER_11,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
     {   PIN_PORT_A,     PIN_NUMBER_12,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
     {   PIN_PORT_A,     PIN_NUMBER_13,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
@@ -36,19 +36,19 @@ static const PinConfig_Type PinList[] =
     {   PIN_PORT_B,     PIN_NUMBER_7 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
     {   PIN_PORT_B,     PIN_NUMBER_8 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
     {   PIN_PORT_B,     PIN_NUMBER_9 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
-    {   PIN_PORT_B,     PIN_NUMBER_10,  PIN_MODE_AF_PP      ,   GPIO_Speed_50MHz    }, /* UART3 TX              */
-    {   PIN_PORT_B,     PIN_NUMBER_11,  PIN_MODE_IN_FLOATING,   GPIO_Speed_50MHz    }, /* UART3 RX              */
-    {   PIN_PORT_B,     PIN_NUMBER_12,  PIN_MODE_IN_FLOATING,   GPIO_Speed_50MHz    }, /* SPI SLAVE SS          */
-    {   PIN_PORT_B,     PIN_NUMBER_13,  PIN_MODE_IN_FLOATING,   GPIO_Speed_50MHz    }, /* SPI SLAVE CLK         */
-    {   PIN_PORT_B,     PIN_NUMBER_14,  PIN_MODE_AF_PP      ,   GPIO_Speed_50MHz    }, /* SPI SLAVE MISO        */
-    {   PIN_PORT_B,     PIN_NUMBER_15,  PIN_MODE_IN_FLOATING,   GPIO_Speed_50MHz    }, /* SPI SLAVE MOSI        */
+    {   PIN_PORT_B,     PIN_NUMBER_10,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* UART3 TX              */
+    {   PIN_PORT_B,     PIN_NUMBER_11,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* UART3 RX              */
+    {   PIN_PORT_B,     PIN_NUMBER_12,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* SPI SLAVE SS          */
+    {   PIN_PORT_B,     PIN_NUMBER_13,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* SPI SLAVE CLK         */
+    {   PIN_PORT_B,     PIN_NUMBER_14,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* SPI SLAVE MISO        */
+    {   PIN_PORT_B,     PIN_NUMBER_15,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* SPI SLAVE MOSI        */
 
     {   PIN_PORT_C,     PIN_NUMBER_13,  PIN_MODE_OUT_PP     ,   GPIO_Speed_50MHz    }, /* user LED */
     {   PIN_PORT_C,     PIN_NUMBER_14,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
     {   PIN_PORT_C,     PIN_NUMBER_15,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
-
+                                                                                                   
     {   PIN_PORT_D,     PIN_NUMBER_0 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
-    {   PIN_PORT_D,     PIN_NUMBER_1 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }, /* usage */
+    {   PIN_PORT_D,     PIN_NUMBER_1 ,  PIN_MODE_NOT_USED   ,   GPIO_Speed_50MHz    }  /* usage */
 };
 
 const U8 PINS_NUMBER = sizeof(PinList)/sizeof(PinList[0]);

@@ -12,12 +12,11 @@ static TimerStruct_Type TimerLedC13;
 /*--------------------------------------------------------------------------------
 *                           Const and Macro
 *--------------------------------------------------------------------------------*/
-#define LED_C13_BLINK_PERIOD    850
+#define LED_C13_BLINK_PERIOD    1000
 
 /*--------------------------------------------------------------------------------
 *                           Functions prototypes
 *--------------------------------------------------------------------------------*/
-void Second_Light(void);
 
 /*--------------------------------------------------------------------------------
 @name		Task_MainRunnable
@@ -57,20 +56,3 @@ void Lighting_InitRunnable(void)
     Timer_CountDown_Start(&TimerLedC13, LED_C13_BLINK_PERIOD);
 }
 
-/*--------------------------------------------------------------------------------
-@brief		This controls second LED - B12
-*--------------------------------------------------------------------------------*/ 
-void Second_Light(void)
-{
-    static U8 isOn = FALSE;
-    if(isOn)
-    {
-        GPIO_ResetBits(GPIOB, GPIO_Pin_12);
-        isOn = FALSE;
-    }
-    else
-    {
-        GPIO_SetBits(GPIOB, GPIO_Pin_12);
-        isOn = TRUE;
-    }
-}

@@ -29,6 +29,11 @@ Pin configuration:
 *                           Const and Macro
 *--------------------------------------------------------------------------------*/
 
+/* Used to enable SPI1 port */
+#define SPI_ENABLE_SPI1                 OFF
+/* Used to enable SPI2 port */
+#define SPI_ENABLE_SPI2                 OFF
+
 /* Master device */
 #define SPI_MASTER_RCC			RCC_APB2Periph_SPI1
 #define SPI_MASTER		        SPI1

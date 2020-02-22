@@ -36,12 +36,18 @@ static void SPI_ISR_Cmd(U8 status);
 static U8 SPI_Init_RCC()
 {
     U8 retCode = RETURN_OK;
-    
+
+#if (SPI_ENABLE_SPI1 == ON)
     RCC_APB2PeriphClockCmd(SPI_MASTER_GPIO_RCC, ENABLE);
-    RCC_APB2PeriphClockCmd(SPI_SLAVE_GPIO_RCC, ENABLE);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
     RCC_APB2PeriphClockCmd(SPI_MASTER_RCC, ENABLE);
+#endif /* SPI_ENABLE_SPI1 == ON */
+
+#if (SPI_ENABLE_SPI2 == ON)
+    RCC_APB2PeriphClockCmd(SPI_SLAVE_GPIO_RCC, ENABLE);
     RCC_APB1PeriphClockCmd(SPI_SLAVE_RCC, ENABLE);
+#endif /* SPI_ENABLE_SPI2 == ON */
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 
     return retCode;
 }
@@ -55,7 +61,7 @@ static U8 SPI_Init_RCC()
 static U8 SPI_Init_Master()
 {
     U8 retCode = RETURN_OK;
-    
+#if (SPI_ENABLE_SPI1 == ON)
     SPI_InitTypeDef spiConfig;
     
     /* configure master SPI */
@@ -73,14 +79,15 @@ static U8 SPI_Init_Master()
     SPI_I2S_ClearFlag(SPI_MASTER, SPI_I2S_FLAG_RXNE);
     
     Spi_Disable_Slave();
-
+#endif /* SPI_ENABLE_SPI1 == ON */
     return retCode;
 }
 
 static U8 SPI_Init_Slave()
 {
     U8 retCode = RETURN_OK;
-    
+
+#if (SPI_ENABLE_SPI2 == ON)
     SPI_InitTypeDef spiConfig;
     
     /* configure master SPI */
@@ -92,6 +99,7 @@ static U8 SPI_Init_Slave()
     spiConfig.SPI_NSS = SPI_NSS_Soft;
     spiConfig.SPI_Mode = SPI_Mode_Slave;
     SPI_Init(SPI_SLAVE, &spiConfig);
+#endif /* SPI_ENABLE_SPI2 == ON */
 
     return retCode;
 }
@@ -115,7 +123,8 @@ static U8 SPI_Init_NVIC(void)
      *  to be informed when new data was received.
     */
     U8 retCode = RETURN_OK;
-    
+
+#if (SPI_ENABLE_SPI2 == ON)
     NVIC_InitTypeDef NVIC_InitStructure;
    
     /* 1 bit for pre-emption priority, 3 bits for subpriority */
@@ -127,6 +136,7 @@ static U8 SPI_Init_NVIC(void)
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
     NVIC_Init(&NVIC_InitStructure);
+#endif /* SPI_ENABLE_SPI2 == ON */
         
     return retCode;
 }
@@ -147,11 +157,15 @@ U8 Spi_Init(void)
     SPI_Init_NVIC();
     
     SPI_ISR_Cmd(ENABLE);
-    
+
+#if (SPI_ENABLE_SPI2 == ON)
     SPI_Cmd(SPI_SLAVE, ENABLE);
+#endif /* SPI_ENABLE_SPI2 == ON */
+
+#if (SPI_ENABLE_SPI1 == ON)
     SPI_Cmd(SPI_MASTER, ENABLE);
-    
     Spi_Enable_Slave();
+#endif /* SPI_ENABLE_SPI1 == ON */
 
     return retCode;
 }
@@ -165,8 +179,10 @@ U8 Spi_Init(void)
 U8 Spi_Deinit(void)
 {
     U8 retCode = RETURN_OK;
-    
+
+#if (SPI_ENABLE_SPI1 == ON)
     Spi_Disable_Slave();
+#endif /* SPI_ENABLE_SPI1 == ON */    
 
     return retCode;
 }
@@ -190,7 +206,8 @@ U16 Spi_Master_Transfer(U16 data)
      *      - So any Tx involves also an Rx
      */
     uint16_t dataFromSlave = SPI_INVALID_DATA;
-        
+
+#if (SPI_ENABLE_SPI1 == ON)
     /* Wait for SPIm Tx buffer empty */
     while (SPI_I2S_GetFlagStatus(SPI_MASTER, SPI_I2S_FLAG_TXE) == RESET);
     /* Write data to TX buffer */
@@ -202,6 +219,7 @@ U16 Spi_Master_Transfer(U16 data)
     while (SPI_I2S_GetFlagStatus(SPI_MASTER, SPI_I2S_FLAG_RXNE) == RESET);
     /* Transmision done. Get data received from slave */
     dataFromSlave = SPI_I2S_ReceiveData(SPI_MASTER);
+#endif /* SPI_ENABLE_SPI1 == ON */    
     
     return dataFromSlave;
 }
@@ -245,11 +263,13 @@ U8 Spi_ReadData(SpiData* data)
 
 static void SPI_ISR_Cmd(U8 status)
 {
+#if (SPI_ENABLE_SPI2 == ON)
     if(ENABLE != status && DISABLE != status)
         return;
-    
+ 
     /* enable slave Rx interrupt */
     SPI_I2S_ITConfig(SPI_SLAVE, SPI_I2S_IT_RXNE, status);
+#endif /* SPI_ENABLE_SPI2 == ON */
 }
 
 void Spi_GetIsrCounters(U32* MasterRxne, U32* SlaveRxne)
@@ -258,6 +278,7 @@ void Spi_GetIsrCounters(U32* MasterRxne, U32* SlaveRxne)
     *SlaveRxne = SlaveRxneCounter;
 }
 
+#if (SPI_ENABLE_SPI2 == ON)
 void SPI2_IRQHandler(void)
 {
     /* THIS IS SLAVE INTERRUPT */
@@ -271,4 +292,4 @@ void SPI2_IRQHandler(void)
     slaveTxData = LastSlaveRxData + 10;
     SPI_I2S_SendData(SPI_SLAVE, slaveTxData);
 }
-
+#endif /* SPI_ENABLE_SPI2 == ON */

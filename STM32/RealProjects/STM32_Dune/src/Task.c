@@ -6,6 +6,7 @@
 
 /* software components includes */
 #include "Lighting.h"
+#include "Display.h"
 #include "Com.h"
 
 /*--------------------------------------------------------------------------------
@@ -13,7 +14,6 @@
 *--------------------------------------------------------------------------------*/
 #define TASK_NUMBER         5
 #define NO_TASK_RUNNABLE    0
-#define MAX_TASK_PERIOD     0xFFFF
 
 /*--------------------------------------------------------------------------------
 *                           Global variables
@@ -21,8 +21,9 @@
 TaskConfiguration_Type taskList[] = 
 {
     /*  task init function          ,   task cyclic function        ,     task period [ms]    */
-    {   &Lighting_InitRunnable      ,   &Lighting_MainRunnable      ,     20                  },
-    {   &Com_InitRunnable           ,   &Com_MainRunnable           ,     10                  }
+    {   &Lighting_InitRunnable      ,   &Lighting_MainRunnable      ,     SWC_LIGHTING_PERIOD  },
+    {   &Com_InitRunnable           ,   &Com_MainRunnable           ,     SWC_COM_PERIOD       },
+    {   &Display_InitRunnable       ,   &Display_MainRunnable       ,     SWC_DISPLAY_PERIOD   }
 };
 
 const U8 TASKS_NUMBER = sizeof(taskList)/sizeof(taskList[0]);

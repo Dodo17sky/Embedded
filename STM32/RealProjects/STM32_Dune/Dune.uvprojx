@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\include;.\SWC\LIGHTING;.\SWC\COM</IncludePath>
+              <IncludePath>.\include;.\SWC\LIGHTING;.\SWC\COM;.\EXT\ST7735;.\SWC\DISPLAY</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -517,6 +517,16 @@
               <FileType>5</FileType>
               <FilePath>.\SWC\COM\Com.h</FilePath>
             </File>
+            <File>
+              <FileName>Display.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\SWC\DISPLAY\Display.c</FilePath>
+            </File>
+            <File>
+              <FileName>Display.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\SWC\DISPLAY\Display.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -531,6 +541,36 @@
               <FileName>Spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\Spi.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>EXT</GroupName>
+          <Files>
+            <File>
+              <FileName>color565.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\EXT\ST7735\color565.h</FilePath>
+            </File>
+            <File>
+              <FileName>font5x7.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\EXT\ST7735\font5x7.h</FilePath>
+            </File>
+            <File>
+              <FileName>font7x11.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\EXT\ST7735\font7x11.h</FilePath>
+            </File>
+            <File>
+              <FileName>st7735.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\EXT\ST7735\st7735.c</FilePath>
+            </File>
+            <File>
+              <FileName>st7735.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\EXT\ST7735\st7735.h</FilePath>
             </File>
           </Files>
         </Group>

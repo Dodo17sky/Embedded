@@ -114,7 +114,7 @@ GPIOMode_TypeDef getPinMode(U8 modeIndex)
 @brief		Initialize general porpouse in out ports
 @paramIn	void
 @paramOut	OK  if success
-        NOK if failed
+            NOK if failed
 *--------------------------------------------------------------------------------*/
 U8 Port_Init(void)
 {
@@ -176,6 +176,20 @@ U8 Port_Init(void)
             GPIO_Init(gpioPort, &pinConfig);
         }
     }
+
+    return retCode;
+}
+
+/*--------------------------------------------------------------------------------
+@name		Port_Deinit
+@brief		Deinitialize ports
+@paramIn	void
+@paramOut	OK  if success
+            NOK if failed
+*--------------------------------------------------------------------------------*/
+U8 Port_Deinit(void)
+{
+    U8 retCode = RETURN_OK;
 
     return retCode;
 }

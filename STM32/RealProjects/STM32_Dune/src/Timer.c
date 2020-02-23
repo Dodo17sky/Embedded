@@ -27,7 +27,6 @@ static volatile U64 SystemTime;
 *--------------------------------------------------------------------------------*/
 U8 Timer_Init(void)
 {
-    
     U8 retCode = RETURN_OK;
      
     // Nomatter what is the freq. of CPU,
@@ -41,6 +40,20 @@ U8 Timer_Init(void)
     /* initialize system time */
     SystemTime = 0;
         
+    return retCode;
+}
+
+/*--------------------------------------------------------------------------------
+@name		Timer_Deinit
+@brief		Deinitialization function of Timer module
+@paramIn	void
+@paramOut	OK  if success
+            NOK if failed
+*--------------------------------------------------------------------------------*/
+U8 Timer_Deinit(void)
+{
+    U8 retCode = RETURN_OK;
+
     return retCode;
 }
 

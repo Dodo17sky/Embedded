@@ -5,6 +5,7 @@
 #include "Display.h"
 #include "ST7735.h"
 #include "Timer.h"
+#include "Adc.h"
 
 /*--------------------------------------------------------------------------------
 *                           Global variables
@@ -19,6 +20,8 @@ static U32 Seconds;
 /*--------------------------------------------------------------------------------
 *                           Functions prototypes
 *--------------------------------------------------------------------------------*/
+u16 readADC1(u8 channel);
+void InitMyAdc(void);
 
 /*--------------------------------------------------------------------------------
 @name		Display_MainRunnable
@@ -32,8 +35,11 @@ void Display_MainRunnable(void)
     {
         Timer = 0;
         Seconds++;
-
-        ST7735_PutInt5x7(3, 5, 30, Seconds, COLOR565_YELLOW, COLOR565_RED);
+        U16 adcValue = Adc_Read(ADC_Channel_0);
+        
+        ST7735_FillRect(0, 29, 127, 90, COLOR565_RED);
+        ST7735_PutInt5x7(3, 5, 30, adcValue, COLOR565_YELLOW, COLOR565_RED);
+        ST7735_PutInt5x7(3, 5, 66, Seconds , COLOR565_BLUE  , COLOR565_RED);
     }
     Timer++;
 }
@@ -63,4 +69,3 @@ void Delay_US(__IO uint32_t nTime)
 {
     Timer_Delay_MS(nTime);
 }
-

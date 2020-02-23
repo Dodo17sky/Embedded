@@ -47,6 +47,18 @@ U8 Task_Init(void)
 }
 
 /*--------------------------------------------------------------------------------
+@name		Task_Deinit
+@brief		Deinitialize module
+@paramIn	void
+@paramOut	OK - all task have been schedueled
+            NOK - task init errors
+*--------------------------------------------------------------------------------*/
+U8 Task_Deinit(void)
+{
+    return RETURN_OK;
+}
+
+/*--------------------------------------------------------------------------------
 @name		Task_InitRunnable
 @brief		Call the initialization functions for all tasks
 @paramIn	void

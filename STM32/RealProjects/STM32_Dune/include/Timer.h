@@ -30,6 +30,7 @@ typedef struct
 *                           Functions prototypes
 *--------------------------------------------------------------------------------*/
 U8 Timer_Init(void);
+U8 Timer_Deinit(void);
 void Timer_Delay_MS(U32 delayTime);
 U64 Timer_GetCurrentTime(void);
 U8 Timer_CountDown_Start(TimerStruct_Type* timer, U32 period);

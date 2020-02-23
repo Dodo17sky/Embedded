@@ -7,6 +7,7 @@
 #include "Task.h"
 #include "Uart.h"
 #include "Spi.h"
+#include "Adc.h"
 
 /*--------------------------------------------------------------------------------
 *                           Global variables
@@ -32,6 +33,7 @@ U8 System_Init(void)
     U8 retCode = RETURN_OK;
 
     /* Peripherals initialization */
+    retCode += Adc_Init();
     retCode += Port_Init();
     retCode += Uart_Init();
     retCode += Timer_Init();
@@ -51,6 +53,14 @@ U8 System_Init(void)
 U8 System_Deinit(void)
 {
     U8 retCode = RETURN_OK;
+
+    /* Peripherals deinitialization */
+    retCode += Adc_Deinit();
+    retCode += Port_Deinit();
+    retCode += Uart_Deinit();
+    retCode += Timer_Deinit();
+    retCode += Spi_Deinit();
+    retCode += Task_Deinit();
 
     return retCode;
 }

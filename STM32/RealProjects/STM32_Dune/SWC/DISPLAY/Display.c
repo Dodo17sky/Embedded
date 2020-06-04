@@ -59,13 +59,3 @@ void Display_InitRunnable(void)
     ST7735_Clear(COLOR565_RED);
 }
 
-/*--------------------------------------------------------------------------------
-@name		Delay_US
-@brief		Delay execution for delayTime milliseconds
-@paramIn	U32 delayTime: time to be delayed
-@paramOut	void
-*--------------------------------------------------------------------------------*/
-void Delay_US(__IO uint32_t nTime)
-{
-    Timer_Delay_MS(nTime);
-}

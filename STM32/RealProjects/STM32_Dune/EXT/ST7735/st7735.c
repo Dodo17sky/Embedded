@@ -41,6 +41,13 @@ uint16_t scr_height;
 *                           Local functions
 *--------------------------------------------------------------------------------*/
 
+void Delay_US(__IO uint32_t nTime)
+{
+    __IO uint32_t delayTicks = (10000 * nTime);
+    for(uint32_t i=0; i<delayTicks; i++)
+        __nop();
+}
+
 /*--------------------------------------------------------------------------------
 @name		  
 @brief		

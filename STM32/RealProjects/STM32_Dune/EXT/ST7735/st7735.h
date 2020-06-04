@@ -114,7 +114,4 @@ void ST7735_PutInt5x7(uint8_t scale, uint8_t X, uint8_t Y, int value, uint16_t c
 void ST7735_PutFloat7x11(uint8_t X, uint8_t Y, float value, uint8_t precision, uint16_t color, uint16_t bgcolor);
 void ST7735_PutFloat5x7(uint8_t scale, uint8_t X, uint8_t Y, float value, uint8_t precision, uint16_t color, uint16_t bgcolor);
 
-// delay function from main.c
-extern void Delay_US(__IO uint32_t nTime);
-
 #endif

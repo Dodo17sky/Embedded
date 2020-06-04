@@ -1,8 +1,10 @@
 /*--------------------------------------------------------------------------------
 *                           Libraries
 *--------------------------------------------------------------------------------*/
-#include "GeneralTypes.h"
 #include "Display.h"
+
+#if (SWC_DISPLAY_ENABLE == ON)
+
 #include "ST7735.h"
 #include "Timer.h"
 #include "Adc.h"
@@ -20,8 +22,6 @@ static U32 Seconds;
 /*--------------------------------------------------------------------------------
 *                           Functions prototypes
 *--------------------------------------------------------------------------------*/
-u16 readADC1(u8 channel);
-void InitMyAdc(void);
 
 /*--------------------------------------------------------------------------------
 @name		Display_MainRunnable
@@ -59,3 +59,9 @@ void Display_InitRunnable(void)
     ST7735_Clear(COLOR565_RED);
 }
 
+#else /* (SWC_DISPLAY_ENABLE == ON) */
+
+void Display_InitRunnable(void) {}
+void Display_MainRunnable(void) {}
+
+#endif /* (SWC_DISPLAY_ENABLE == ON) */

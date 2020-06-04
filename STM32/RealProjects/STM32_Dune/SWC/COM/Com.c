@@ -2,6 +2,9 @@
 *                           Libraries
 *--------------------------------------------------------------------------------*/
 #include "Com.h"
+
+#if (SWC_COM_ENABLE == ON)
+
 #include "Uart.h"
 #include "Spi.h"
 #include "String.h"
@@ -111,3 +114,10 @@ static void Com_SPI_MainFunction(void)
     RxData = Spi_Master_Transfer(TxData);
     TxData = RxData + 3;
 }
+
+#else /* (SWC_COM_ENABLE == ON) */
+
+void Com_InitRunnable(void) {}
+void Com_MainRunnable(void) {}
+
+#endif /* (SWC_COM_ENABLE == ON) */

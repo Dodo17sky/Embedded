@@ -2,6 +2,9 @@
 *                           Libraries
 *--------------------------------------------------------------------------------*/
 #include "Lighting.h"
+
+#if (SWC_LIGHTING_ENABLE == ON)
+
 #include "Timer.h"
 #include "stm32f10x_gpio.h"
 
@@ -56,3 +59,9 @@ void Lighting_InitRunnable(void)
     Timer_CountDown_Start(&TimerLedC13, LED_C13_BLINK_PERIOD);
 }
 
+#else /* (SWC_LIGHTING_ENABLE == ON) */
+
+void Lighting_InitRunnable(void) {}
+void Lighting_MainRunnable(void) {}
+
+#endif /* (SWC_LIGHTING_ENABLE == ON) */

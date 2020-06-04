@@ -13,7 +13,12 @@
 /*--------------------------------------------------------------------------------
 *                           Const and Macro
 *--------------------------------------------------------------------------------*/
-#define SWC_LIGHTING_PERIOD  20U
+
+/* This is the main activation switch of "Com" software component */
+#define SWC_LIGHTING_ENABLE         OFF
+
+/* "Com" task period [ms] */
+#define SWC_LIGHTING_PERIOD         20U
 
 /*--------------------------------------------------------------------------------
 *                           Global variables

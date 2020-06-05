@@ -10,7 +10,7 @@
 *                           Custom types
 *--------------------------------------------------------------------------------*/
 typedef struct{
-    char* buffer;
+    volatile char* buffer;
     U16 size;
     U16 head;
     U16 tail;

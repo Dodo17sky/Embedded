@@ -53,18 +53,24 @@ typedef struct __attribute__ ((aligned (1)))
 #define PIN_MODE_NOT_USED       0
 #define PIN_MODE_AIN            1
 #define PIN_MODE_IN_FLOATING    2
-#define PIN_MODE_IPD            3
-#define PIN_MODE_IPU            4
+#define PIN_MODE_IN_PULLDOWN    3
+#define PIN_MODE_IN_PULLUP      4
 #define PIN_MODE_OUT_OD         5
 #define PIN_MODE_OUT_PP         6
 #define PIN_MODE_AF_OD          7
 #define PIN_MODE_AF_PP          8
+
+/* Digital pin state */
+#define PIN_STATUS_LOW          0
+#define PIN_STATUS_HIGH         1
 
 /*--------------------------------------------------------------------------------
 *                           Functions prototypes
 *--------------------------------------------------------------------------------*/
 U8 Port_Init(void);
 U8 Port_Deinit(void);
+
+U8 Port_ReadPin(U8 port, U8 pin);
 
 #endif /* PORT_HEADER */
  

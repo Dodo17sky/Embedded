@@ -15,18 +15,18 @@
 *--------------------------------------------------------------------------------*/
 
 #if (ENABLE_DEVICE_UART1 == ON)
-    static char U1_RxBuffer[UART_RX_BUFFER_SIZE];
-    static RingBuffer_Type RB_U1;
+    static volatile char U1_RxBuffer[UART_RX_BUFFER_SIZE];
+    static volatile RingBuffer_Type RB_U1;
 #endif /* ENABLE_DEVICE_UART1 == ON */
 
 #if (ENABLE_DEVICE_UART2 == ON)
-    static char U2_RxBuffer[UART_RX_BUFFER_SIZE];
-    static RingBuffer_Type RB_U2;
+    static volatile char U2_RxBuffer[UART_RX_BUFFER_SIZE];
+    static volatile RingBuffer_Type RB_U2;
 #endif /* ENABLE_DEVICE_UART2 == ON */
     
 #if (ENABLE_DEVICE_UART3 == ON)
-    static char U3_RxBuffer[UART_RX_BUFFER_SIZE];
-    static RingBuffer_Type RB_U3;
+    static volatile char U3_RxBuffer[UART_RX_BUFFER_SIZE];
+    static volatile RingBuffer_Type RB_U3;
 #endif /* ENABLE_DEVICE_UART3 == ON */
 
 /*--------------------------------------------------------------------------------
@@ -301,7 +301,7 @@ U8 Uart_Send_UInteger(USART_TypeDef* UARTx, U32 number)
 U16 Uart_RB_Read(USART_TypeDef* UARTx, char* buffer, U16 bufSize)
 {
     U16 dataRead = 0;
-    RingBuffer_Type* tmpRB = nullptr;
+    volatile RingBuffer_Type* tmpRB = nullptr;
     
 #if UART_IS_ENABLED
     if(USART1 == UARTx)

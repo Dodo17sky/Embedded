@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\include;.\SWC\LIGHTING;.\SWC\COMMANAGER;.\EXT\ST7735;.\SWC\DISPLAY;.\SWC\SENSOR</IncludePath>
+              <IncludePath>.\include;.\SWC\LIGHTING;.\SWC\COMMANAGER;.\EXT\ST7735;.\SWC\DISPLAY;.\SWC\SENSOR;.\RteCom</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -596,6 +596,21 @@
               <FileName>Adc.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\include\Adc.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>RTE</GroupName>
+          <Files>
+            <File>
+              <FileName>Rte_Lighting.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\RteCom\Rte_Lighting.h</FilePath>
+            </File>
+            <File>
+              <FileName>Rte_ComManager.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\RteCom\Rte_ComManager.h</FilePath>
             </File>
           </Files>
         </Group>

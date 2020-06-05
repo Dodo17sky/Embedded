@@ -77,6 +77,21 @@ void Sensor_MainRunnable(void)
 
 }
 
+/*--------------------------------------------------------------------------------
+@name		Sensor_ReadSensor
+@brief		Read the current state of the sensor
+@paramIn	sensorIndex
+@paramOut	sensor
+*--------------------------------------------------------------------------------*/ 
+void Sensor_ReadSensor(U8 sensorIndex, struct Sensor_StatusType *sensor)
+{
+    if(sensorIndex < SENSOR_NUMBER)
+    {
+        sensor->value = SensorStatus[sensorIndex].value;
+        sensor->updated = SensorStatus[sensorIndex].updated;
+    }
+}
+
 #else /* (SWC_SENSOR_ENABLE == ON) */
 
 void Sensor_InitRunnable(void) {}

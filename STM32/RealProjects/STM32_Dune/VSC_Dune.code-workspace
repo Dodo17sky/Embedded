@@ -5,6 +5,27 @@
 		}
 	],
 	"settings": {
+		"files.exclude": {
+			"Listings": true,
+			"Objects": true,
+			"Resources": true,
+			"Docs": true,
+			"DebugConfig": true,
+
+			"**/**.gitignore": true,
+			"**/**.dr": true,
+			"**/**.uvoptx": true,
+			"**/**.uvprojx": true,
+			"**/**.scvd": true,
+			"**/**.md": true,
+			
+			"**/.git": true,
+			"**/.svn": true,
+			"**/.hg": true,
+			"**/CVS": true,
+			"**/.DS_Store": true
+		},
+
 		"files.associations": {
 			"st7735.h": "c",
 			"stm32f10x_rcc.h": "c",

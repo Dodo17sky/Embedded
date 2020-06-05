@@ -194,6 +194,13 @@ U8 Port_Deinit(void)
     return retCode;
 }
 
+/*--------------------------------------------------------------------------------
+@name		Port_ReadPin
+@brief		Check if a pin is low or high
+@paramIn	port, pin
+@paramOut	PIN_STATUS_HIGH - pin voltage is high 3.3V
+            PIN_STATUS_LOW - pin voltage is low 0V
+*--------------------------------------------------------------------------------*/
 inline U8 Port_ReadPin(U8 port, U8 pin)
 {
     GPIO_TypeDef* gpioPort = (GPIO_TypeDef*)((uint32_t)GPIOA + (port * 0x400));
@@ -203,5 +210,51 @@ inline U8 Port_ReadPin(U8 port, U8 pin)
         return PIN_STATUS_HIGH;
     else
         return PIN_STATUS_LOW;
+}
+
+/*--------------------------------------------------------------------------------
+@name		Port_WritePin
+@brief		Set the pin output state
+@paramIn	port, pin, status
+@paramOut	none
+*--------------------------------------------------------------------------------*/
+inline void Port_WritePin(U8 port, U8 pin, U8 status)
+{
+    GPIO_TypeDef* gpioPort = (GPIO_TypeDef*)((uint32_t)GPIOA + (port * 0x400));
+    U16 gpioPin = (U16)(1 << pin);
+    
+    if(PIN_STATUS_LOW == status)
+    {
+        /* set pin to low */
+        gpioPort->BRR = gpioPin;
+    }
+    else
+    {
+        /* set pin to high */
+        gpioPort->BSRR = gpioPin;
+    }
+}
+
+/*--------------------------------------------------------------------------------
+@name		Port_TogglePin
+@brief		Toggle the pin status
+@paramIn	port, pin
+@paramOut	none
+*--------------------------------------------------------------------------------*/
+inline void Port_TogglePin(U8 port, U8 pin)
+{
+    GPIO_TypeDef* gpioPort = (GPIO_TypeDef*)((uint32_t)GPIOA + (port * 0x400));
+    U16 gpioPin = (U16)(1 << pin);
+    
+    if(((uint16_t)gpioPort->IDR) & gpioPin)
+    {
+        /* set pin to low */
+        gpioPort->BRR = gpioPin;
+    }
+    else
+    {
+        /* set pin to high */
+        gpioPort->BSRR = gpioPin;
+    }
 }
 

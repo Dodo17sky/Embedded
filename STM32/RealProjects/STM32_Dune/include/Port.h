@@ -71,6 +71,8 @@ U8 Port_Init(void);
 U8 Port_Deinit(void);
 
 U8 Port_ReadPin(U8 port, U8 pin);
+void Port_WritePin(U8 port, U8 pin, U8 status);
+void Port_TogglePin(U8 port, U8 pin);
 
 #endif /* PORT_HEADER */
  

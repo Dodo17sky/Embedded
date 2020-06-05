@@ -6,7 +6,7 @@
 #if (SWC_LIGHTING_ENABLE == ON)
 
 #include "Timer.h"
-#include "stm32f10x_gpio.h"
+#include "Port.h"
 
 /*--------------------------------------------------------------------------------
 *                           Global variables
@@ -29,20 +29,10 @@ static TimerStruct_Type TimerLedC13;
 *--------------------------------------------------------------------------------*/ 
 void Lighting_MainRunnable(void)
 {
-    static U8 isOn = FALSE;
     
     if(TIMER_ELAPSED == Timer_CountDown_IsDone(&TimerLedC13))
     {
-        if(FALSE == isOn)
-        {
-            GPIO_ResetBits(GPIOC, GPIO_Pin_13);
-            isOn = TRUE;
-        }
-        else
-        {
-            GPIO_SetBits(GPIOC, GPIO_Pin_13);
-            isOn = FALSE;
-        }
+        Port_TogglePin(PIN_PORT_C, PIN_NUMBER_13);
         Timer_CountDown_Start(&TimerLedC13, LED_C13_BLINK_PERIOD);
     }
 }

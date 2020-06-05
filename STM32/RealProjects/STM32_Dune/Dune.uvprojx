@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\include;.\SWC\LIGHTING;.\SWC\COM;.\EXT\ST7735;.\SWC\DISPLAY</IncludePath>
+              <IncludePath>.\include;.\SWC\LIGHTING;.\SWC\COM;.\EXT\ST7735;.\SWC\DISPLAY;.\SWC\SENSOR</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -526,6 +526,16 @@
               <FileName>Display.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\SWC\DISPLAY\Display.h</FilePath>
+            </File>
+            <File>
+              <FileName>Sensor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\SWC\SENSOR\Sensor.c</FilePath>
+            </File>
+            <File>
+              <FileName>Sensor.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\SWC\SENSOR\Sensor.h</FilePath>
             </File>
           </Files>
         </Group>

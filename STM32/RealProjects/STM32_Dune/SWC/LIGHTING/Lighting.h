@@ -15,7 +15,7 @@
 *--------------------------------------------------------------------------------*/
 
 /* This is the main activation switch of "Com" software component */
-#define SWC_LIGHTING_ENABLE         OFF
+#define SWC_LIGHTING_ENABLE         ON
 
 /* "Com" task period [ms] */
 #define SWC_LIGHTING_PERIOD         20U

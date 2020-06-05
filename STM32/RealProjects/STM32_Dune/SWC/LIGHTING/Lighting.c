@@ -22,8 +22,8 @@ static TimerStruct_Type TimerLedC13;
 *--------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------------
-@name		Task_MainRunnable
-@brief		This task run forever. This will launch all the task in this system
+@name		Lighting_MainRunnable
+@brief		This is the cycle function of Lighting software component
 @paramIn	void
 @paramOut	void
 *--------------------------------------------------------------------------------*/ 

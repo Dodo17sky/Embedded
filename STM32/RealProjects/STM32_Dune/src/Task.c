@@ -8,7 +8,7 @@
 #include "Sensor.h"
 #include "Lighting.h"
 #include "Display.h"
-#include "Com.h"
+#include "ComManager.h"
 
 /*--------------------------------------------------------------------------------
 *                           Const and Macro
@@ -21,7 +21,7 @@ TaskConfiguration_Type taskList[] =
 {
     /*  task init function          ,   task cyclic function        ,     task period [ms]    */
     {   &Lighting_InitRunnable      ,   &Lighting_MainRunnable      ,     SWC_LIGHTING_PERIOD  },
-    {   &Com_InitRunnable           ,   &Com_MainRunnable           ,     SWC_COM_PERIOD       },
+    {   &ComManager_InitRunnable    ,   &ComManager_MainRunnable    ,     SWC_COMMANAGER_PERIOD},
     {   &Display_InitRunnable       ,   &Display_MainRunnable       ,     SWC_DISPLAY_PERIOD   },
     {   &Sensor_InitRunnable        ,   &Sensor_MainRunnable        ,     SWC_SENSOR_PERIOD    }
 };

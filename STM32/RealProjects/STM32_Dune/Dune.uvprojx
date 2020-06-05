@@ -607,6 +607,11 @@
               <FileType>5</FileType>
               <FilePath>.\RteCom\Rte_Lighting.h</FilePath>
             </File>
+            <File>
+              <FileName>Rte_ComManager.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\RteCom\Rte_ComManager.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -44,6 +44,7 @@ static inline U8 Uart_SendOneByte(USART_TypeDef* UARTx, U8 byte);
 U8 Uart_Init(void)
 {
     U8 initStatus = RETURN_OK;
+    char uartInitMsg[] = "\nUART1 - x  UART2 - x  UART3 - x";
 
 #if UART_IS_ENABLED
 #if (ENABLE_DEVICE_UART1 == ON)
@@ -60,10 +61,14 @@ U8 Uart_Init(void)
     
     initStatus = Init_LowDriver();
     
+    uartInitMsg[9] = '0' + ENABLE_DEVICE_UART1;
+    uartInitMsg[20] = '0' + ENABLE_DEVICE_UART2;
+    uartInitMsg[31] = '0' + ENABLE_DEVICE_UART3;
+    
     /* Mark UART channels initialization */
-    Uart_Send_String(USART1, "Hi! This is UART1\n", 18);
-    Uart_Send_String(USART2, "Hi! This is UART2\n", 18);
-    Uart_Send_String(USART3, "Hi! This is UART3\n", 18);
+    Uart_Send_String(USART1, uartInitMsg, 32);
+    Uart_Send_String(USART2, uartInitMsg, 32);
+    Uart_Send_String(USART3, uartInitMsg, 32);
 #endif /* UART_IS_ENABLED */
 
     return initStatus;

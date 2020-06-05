@@ -5,6 +5,7 @@
 
 #if (SWC_LIGHTING_ENABLE == ON)
 
+#include "Rte_Lighting.h"
 #include "Timer.h"
 #include "Port.h"
 
@@ -29,12 +30,15 @@ static TimerStruct_Type TimerLedC13;
 *--------------------------------------------------------------------------------*/ 
 void Lighting_MainRunnable(void)
 {
+    U8 ledStatus = PIN_STATUS_LOW;
+    struct Sensor_StatusType pushBtn;
+    Rte_Lighting_ReadSensor(0, &pushBtn);
     
-    if(TIMER_ELAPSED == Timer_CountDown_IsDone(&TimerLedC13))
-    {
-        Port_TogglePin(PIN_PORT_C, PIN_NUMBER_13);
-        Timer_CountDown_Start(&TimerLedC13, LED_C13_BLINK_PERIOD);
-    }
+    /* Onboard LED is connected to 3.3V, so turning PC13 to high will turn off the led */
+    if(pushBtn.value == PIN_STATUS_LOW)
+        ledStatus = PIN_STATUS_HIGH;
+    
+    Port_WritePin(PIN_PORT_C, PIN_NUMBER_13, ledStatus);
 }
 
 /*--------------------------------------------------------------------------------

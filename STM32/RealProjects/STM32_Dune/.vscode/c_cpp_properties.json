@@ -6,9 +6,10 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/SWC/LIGHTING",
-                "${workspaceFolder}/SWC/COM",
+                "${workspaceFolder}/SWC/COMMANAGER",
                 "${workspaceFolder}/EXT/ST7735",
                 "${workspaceFolder}/SWC/DISPLAY",
+                "${workspaceFolder}/SWC/SENSOR",
                 "C:/Keil_v5/ARM/PACK/Keil/STM32F1xx_DFP/2.3.0/Device/Include",
                 "C:/Keil_v5/ARM/PACK/Keil/STM32F1xx_DFP/2.3.0/Device/StdPeriph_Driver/inc",
                 "C:/Keil_v5/ARM/PACK/ARM/CMSIS/5.4.0/CMSIS/Core/Include"

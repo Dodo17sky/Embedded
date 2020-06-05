@@ -10,10 +10,12 @@
 #include "String.h"
 #include "Utils.h"
 
+#include "Rte_ComManager.h"
+
 /*--------------------------------------------------------------------------------
 *                           Global variables
 *--------------------------------------------------------------------------------*/
-
+static U8 lastBtnStatus = 0;
 /*--------------------------------------------------------------------------------
 *                           Const and Macro
 *--------------------------------------------------------------------------------*/
@@ -23,6 +25,8 @@
 *--------------------------------------------------------------------------------*/
 static void Com_Uart_MainFunction(void);
 static void Com_SPI_MainFunction(void);
+static void ComM_SensorCheck(void);
+static void ComM_UartReply(void);
 
 /*--------------------------------------------------------------------------------
 *                           Functions prototypes definition
@@ -60,6 +64,59 @@ void ComManager_InitRunnable(void)
 *--------------------------------------------------------------------------------*/
 static void Com_Uart_MainFunction(void)
 {
+    ComM_UartReply();
+    
+    ComM_SensorCheck();
+}
+
+/*--------------------------------------------------------------------------------
+@name		Com_InitRunnable
+@brief		Main SPI function that handles the Rx and Tx communication
+@paramIn	void
+@paramOut	void
+*--------------------------------------------------------------------------------*/
+static void Com_SPI_MainFunction(void)
+{
+    static U8 TxData = 50;
+    U8 RxData;
+
+    RxData = Spi_Master_Transfer(TxData);
+    TxData = RxData + 3;
+}
+
+/*--------------------------------------------------------------------------------
+@name		ComM_SensorCheck
+@brief		This function check sensors status and notify by a com message
+@paramIn	void
+@paramOut	void
+*--------------------------------------------------------------------------------*/
+static void ComM_SensorCheck(void)
+{
+    struct Sensor_StatusType pushBtn;
+    Rte_ComManager_ReadSensor(0, &pushBtn);
+    
+    if(pushBtn.value != lastBtnStatus)
+    {
+        /* Message for user terminal */
+        Uart_Send_String(USART3, "STM32 led = ", 12);
+        Uart_Send_UInteger(USART3, (U32)pushBtn.value);
+        Uart_Send_Byte(USART3, '\n');
+        
+        /* Message to ESP8266 */
+        Uart_Send_UInteger(USART2, (U32)pushBtn.value);
+        
+        lastBtnStatus = pushBtn.value;
+    }
+}
+
+/*--------------------------------------------------------------------------------
+@name		ComM_UartReply
+@brief		Check messages received on Uart and reply with a message
+@paramIn	void
+@paramOut	void
+*--------------------------------------------------------------------------------*/
+static void ComM_UartReply(void)
+{
     U8 bytesRead = 0;
     UartRxBuffer_Type tmpBuf = {0};
 
@@ -75,7 +132,7 @@ static void Com_Uart_MainFunction(void)
     }
 #endif /* ENABLE_DEVICE_UART1 == ON */
 
-#if (ENABLE_DEVICE_UART2 == ON)
+#if (ENABLE_DEVICE_UART2 == ON && 0)
     ZERO_FILL_ARRAY(tmpBuf);
     bytesRead = Uart_RB_Read(USART2, (char*)&tmpBuf, ARRAY_SIZE(tmpBuf));
     if(bytesRead > 0)
@@ -98,21 +155,6 @@ static void Com_Uart_MainFunction(void)
         Uart_Send_String(USART3, "\n", 1);
     }
 #endif /* ENABLE_DEVICE_UART3 == ON */
-}
-
-/*--------------------------------------------------------------------------------
-@name		Com_InitRunnable
-@brief		Main SPI function that handles the Rx and Tx communication
-@paramIn	void
-@paramOut	void
-*--------------------------------------------------------------------------------*/
-static void Com_SPI_MainFunction(void)
-{
-    static U8 TxData = 50;
-    U8 RxData;
-
-    RxData = Spi_Master_Transfer(TxData);
-    TxData = RxData + 3;
 }
 
 #else /* (SWC_COMMANAGER_ENABLE == ON) */

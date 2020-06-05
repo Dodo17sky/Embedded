@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\include;.\SWC\LIGHTING;.\SWC\COM;.\EXT\ST7735;.\SWC\DISPLAY;.\SWC\SENSOR</IncludePath>
+              <IncludePath>.\include;.\SWC\LIGHTING;.\SWC\COMMANAGER;.\EXT\ST7735;.\SWC\DISPLAY;.\SWC\SENSOR</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -508,16 +508,6 @@
               <FilePath>.\SWC\LIGHTING\Lighting.h</FilePath>
             </File>
             <File>
-              <FileName>Com.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\SWC\COM\Com.c</FilePath>
-            </File>
-            <File>
-              <FileName>Com.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\SWC\COM\Com.h</FilePath>
-            </File>
-            <File>
               <FileName>Display.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\SWC\DISPLAY\Display.c</FilePath>
@@ -536,6 +526,16 @@
               <FileName>Sensor.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\SWC\SENSOR\Sensor.h</FilePath>
+            </File>
+            <File>
+              <FileName>ComManager.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\SWC\COMMANAGER\ComManager.c</FilePath>
+            </File>
+            <File>
+              <FileName>ComManager.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\SWC\COMMANAGER\ComManager.h</FilePath>
             </File>
           </Files>
         </Group>

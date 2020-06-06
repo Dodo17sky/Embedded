@@ -1,0 +1,6 @@
+
+# Ignore by file path pattern
+build
+
+# Ignore by extension
+*.some_extension.*

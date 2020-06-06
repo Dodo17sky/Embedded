@@ -1,0 +1,2 @@
+eclipse.preferences.version=1
+libraries=[{"package"\:"esp8266","platform"\:"esp8266","library"\:"SPISlave"}]
